@@ -154,7 +154,7 @@
 
         this.getEnvironment = function() {
             switch (EnvironmentConfig.API) {
-                case "http://65.0.242.31:8000/api/": return "local";
+                case "https://api.pecha.services/api/": return "local";
                 case "http://localhost:8000/api/": return "local";
                 case "https://staging.eval.ai/api/": return "staging";
                 case "https://eval.ai/api/": return "production";
