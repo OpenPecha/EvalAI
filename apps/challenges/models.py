@@ -89,7 +89,7 @@ class Challenge(TimeStampedModel):
         default=False, upload_to=RandomFileName("evaluation_scripts")
     )  # should be zip format
     approved_by_admin = models.BooleanField(
-        default=False, verbose_name="Approved By Admin", db_index=True
+        default=True, verbose_name="Approved By Admin", db_index=True
     )
     uses_ec2_worker = models.BooleanField(
         default=False, verbose_name="Uses EC2 worker instance", db_index=True
