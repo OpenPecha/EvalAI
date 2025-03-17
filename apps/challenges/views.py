@@ -4664,7 +4664,8 @@ def request_challenge_approval_by_pk(request, challenge_pk):
         error_message = f"The following challenge phases do not have finished submissions: {', '.join(unfinished_phases)}"
         return Response({"error": error_message}, status=status.HTTP_406_NOT_ACCEPTABLE)
 
-    if not settings.DEBUG:
+    # if not settings.DEBUG:
+    if True:
         try:
             evalai_api_server = settings.EVALAI_API_SERVER
             approval_webhook_url = settings.APPROVAL_WEBHOOK_URL
