@@ -8,6 +8,7 @@ services:
       - pgdata:/var/lib/postgresql/data
 
 
+
   sqs:
     image: softwaremill/elasticmq
     hostname: sqs
@@ -76,3 +77,8 @@ services:
     ports:
       - '9125:9125'
       - '9102:9102'
+
+
+
+volumes:
+  pgdata:
