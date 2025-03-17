@@ -4,6 +4,9 @@ services:
     image: postgres:10.4
     ports:
       - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
 
   sqs:
     image: softwaremill/elasticmq
