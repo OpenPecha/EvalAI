@@ -193,6 +193,7 @@ ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = (
 ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = (
     "/api/auth/email-confirmed/"
 )
+ACCOUNT_EMAIL_SUBJECT_PREFIX = ""
 
 AUTHENTICATION_BACKENDS = (
     # Needed to login by username in Django admin, regardless of `allauth`
