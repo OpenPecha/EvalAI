@@ -1,4 +1,4 @@
 {% load i18n %}
 {% autoescape off %}
-OpenPecha - {% blocktrans %}Please Confirm Your Email Address{% endblocktrans %}
+OpenPecha Challenge - Please Confirm Your Email Address
 {% endautoescape %}
