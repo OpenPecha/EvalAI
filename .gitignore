@@ -27,11 +27,12 @@ docs/build/
 
 # dotenv
 .env
-
+*.env
 # virtualenv
 env/
 venv/
 ENV/
+EvalAI/docker/dev/docker.env
 
 # Fabric Files
 fabfile/

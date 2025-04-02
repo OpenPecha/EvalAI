@@ -1,0 +1,94 @@
+
+Old EC2 calles:
+ssh -i EvalAI_Docker_1.pem ubuntu@ec2-43-205-214-36.ap-south-1.compute.amazonaws.com
+ssh -i EvalAI_Docker_1.pem ubuntu@ec2-65-0-182-18.ap-south-1.compute.amazonaws.com
+
+Ec2 EvalAI_test:
+ssh -i EvalAI_Docker_1.pem ubuntu@ec2-13-202-219-44.ap-south-1.compute.amazonaws.com
+
+Ec2 EvalAI_fork:
+ssh -i EvalAI_Docker_1.pem ubuntu@ec2-65-0-242-31.ap-south-1.compute.amazonaws.com
+
+13.202.219.44:8888
+
+
+docker-compose up -d
+
+docker-compose up 
+
+docker-compose -f docker-compose.yml -f docker-compose-production.yml up --build
+
+
+--------------
+After running these commands, you can check the status of your containers using:
+
+docker-compose ps
+
+
+docker-compose down -v
+
+remove all images:
+docker rmi -f $(docker images -aq)
+
+docker-compose down --volumes --rmi all
+
+
+### Key Points
+
+- **Port Conflict Explanation:**  
+  The "port is already allocated" error means that the required ports (e.g., 5432, 9324, 35729, 9125) are currently in use by existing containers or processes.
+
+- **Checking Existing Containers:**  
+  Use `docker ps -a` to list all running (and stopped) containers to identify which ones are using the conflicting ports.
+
+- **Removing Unwanted Containers:**  
+  Stopped containers won't free up ports if there are still running containers. You must stop and remove the running ones that are causing conflicts.
+
+- **Commands to Stop and Remove Containers:**  
+  Use `docker stop` to halt the containers, then `docker rm` to remove them from the system.
+
+- **Verifying Port Usage:**  
+  After stopping/removing, use `docker ps` or tools like `lsof` (e.g., `sudo lsof -i :5432`) to check that the ports are free.
+
+- **Restarting Your Deployment:**  
+  Once the conflicting containers are removed and the ports are free, re-run your `docker-compose up` command to start the deployment without issues.
+
+---
+
+### Bash Code Snippets for Future Use
+
+1. **List All Containers:**
+   ```bash
+   docker ps -a
+   ```
+
+2. **Stop Specific Containers (Replace with your container names):**
+   ```bash
+   docker stop evala_ec2_statsd-exporter_1 evala_ec2_db_1 evala_ec2_sqs_1 evala_ec2_nodejs_1
+   ```
+
+3. **Remove Stopped Containers:**
+   ```bash
+   docker rm evala_ec2_statsd-exporter_1 evala_ec2_db_1 evala_ec2_sqs_1 evala_ec2_nodejs_1
+   ```
+
+4. **Clean Up Stopped Containers (if needed):**
+   ```bash
+   docker container prune
+   ```
+
+5. **Check Which Process Is Using a Specific Port (Example for port 5432):**
+   ```bash
+   sudo lsof -i :5432
+   ```
+
+6. **Restart Your Docker Deployment:**
+   ```bash
+   docker-compose up
+   ```
+
+---
+
+Using these commands will help you manage and troubleshoot container conflicts and port allocation issues in the future.
+
+
