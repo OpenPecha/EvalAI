@@ -5,7 +5,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - /mnt/data/pgdata:/var/lib/postgresql/data
+      - /data/pgdata:/var/lib/postgresql/data
 
 
 
@@ -79,6 +79,3 @@ services:
       - '9102:9102'
 
 
-
-volumes:
-  pgdata:
