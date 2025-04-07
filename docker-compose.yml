@@ -19,6 +19,8 @@ services:
     hostname: django
     env_file:
       - docker/dev/docker.env
+    environment:
+    - SEED_ON_STARTUP=false
     build:
       context: ./
       dockerfile: docker/dev/django/Dockerfile
