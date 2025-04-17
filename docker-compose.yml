@@ -23,8 +23,8 @@ services:
     env_file:
       - docker.env
     environment:
-    - SEED_ON_STARTUP=true
-    - RUN_MIGRATIONS=true
+    - SEED_ON_STARTUP=false
+    - RUN_MIGRATIONS=false
     build:
       context: ./
       dockerfile: docker/dev/django/Dockerfile
