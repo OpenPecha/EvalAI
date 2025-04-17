@@ -21,7 +21,7 @@ services:
   django:
     hostname: django
     env_file:
-      - docker/dev/docker.env
+      - docker.env
     environment:
     - SEED_ON_STARTUP=true
     - RUN_MIGRATIONS=true
@@ -39,7 +39,7 @@ services:
 
   worker:
     env_file:
-      - docker/dev/docker.env
+      - docker.env
     build:
       context: ./
       dockerfile: docker/dev/worker/Dockerfile
@@ -50,7 +50,7 @@ services:
 
   worker_py3_8:
     env_file:
-      - docker/dev/docker.env
+      - docker.env
     build:
       context: ./
       dockerfile: docker/dev/worker_py3.8/Dockerfile
