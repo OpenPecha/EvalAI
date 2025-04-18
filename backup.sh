@@ -10,7 +10,7 @@ PG_PORT=${POSTGRES_PORT:-"5432"}
 PG_USER=${POSTGRES_USER:-"postgres"}
 PG_DB=${POSTGRES_NAME:-"your_database_name"}
 S3_BUCKET=${S3_BUCKET:-"s3://your-backup-bucket"}
-BACKUP_PATH="/backups"
+BACKUP_PATH="/home/ubuntu/backups"
 DATE=$(date +%Y%m%d%H%M%S)
 BACKUP_FILE="$BACKUP_PATH/db_backup_$DATE.dump"
 
