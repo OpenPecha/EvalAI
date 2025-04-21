@@ -13,7 +13,7 @@ PG_DB=${POSTGRES_NAME:-"your_database_name"}
 S3_BUCKET=${S3_BUCKET:-"s3://your-backup-bucket"}
 BACKUP_PATH="/home/ubuntu/backups"
 DATE=$(date +%Y%m%d%H%M%S)
-BACKUP_FILE="$BACKUP_PATH/db_backup_$DATE.dump"
+BACKUP_FILE="$BACKUP_PATH/db_backup_$DATE.sql"
 
 # Create backup directory if it doesn't exist
 echo "Creating backup directory at $BACKUP_PATH..."
@@ -21,7 +21,7 @@ mkdir -p $BACKUP_PATH
 
 # Perform the backup using pg_dump
 echo "Starting database backup for database '$PG_DB'..."
-docker exec -t evalai-db-1 pg_dump -h $PG_HOST -U $PG_USER -F c $PG_DB > $BACKUP_FILE
+docker exec -t evalai-db-1 pg_dump -U postgres -d $PG_DB > $BACKUP_FILE
 echo "Database backup completed and saved to $BACKUP_FILE"
 
 # Upload the backup to S3
