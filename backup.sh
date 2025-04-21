@@ -6,6 +6,8 @@ echo "Loading environment variables from docker.env..."
 source docker.env
 
 # Define variables using environment variables
+
+PG_CONTAINER=${POSTGRES_CONTAINER:-"evalai-db-1"}  # Default to evalai-db-1 if not set
 PG_HOST=${POSTGRES_HOST:-"db"}  # Default to 'db' if not set in .env
 PG_PORT=${POSTGRES_PORT:-"5432"}
 PG_USER=${POSTGRES_USER:-"postgres"}
@@ -22,6 +24,10 @@ mkdir -p $BACKUP_PATH
 # Perform the backup using pg_dump
 echo "Starting database backup for database '$PG_DB'..."
 docker exec -t evalai-db-1 pg_dump -U postgres -d $PG_DB > $BACKUP_FILE
+docker exec $PG_CONTAINER \
+  pg_dump -U postgres -d $PG_DB -Fc --clean \
+  > $BACKUP_FILE
+
 echo "Database backup completed and saved to $BACKUP_FILE"
 
 # Upload the backup to S3
