@@ -118,10 +118,14 @@
                                 </div>
                                 <div class="card-content">
                                     <span class="card-title">{{challenge.title}}</span>
-                                    <p>{{challenge.description}}</p>
+                                    <p class="organizer"><strong>Organizer:</strong> {{challenge.organizer}}</p>
+                                    <p class="dates">
+                                        <span class="start-date"><strong>Start:</strong> {{challenge.startDate}}</span><br>
+                                        <span class="end-date"><strong>End:</strong> {{challenge.endDate}}</span>
+                                    </p>
                                 </div>
                                 <div class="card-action">
-                                    <a ng-href="{{challenge.url}}">View Challenge</a>
+                                    <a ng-href="{{challenge.url}}" target="_blank">View Details</a>
                                 </div>
                             </div>
                         </div>

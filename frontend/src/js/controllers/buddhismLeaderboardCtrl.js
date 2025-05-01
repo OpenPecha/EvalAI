@@ -20,6 +20,8 @@
         vm.ongoingCount = 0;
         vm.upcomingCount = 0;
         vm.pastCount = 0;
+        vm.baseUrl = 'https://pecha.services';
+        vm.apiUrl = 'https://api.pecha.services';
         
         // Initialize the controller
         vm.initialize = function() {
@@ -71,62 +73,81 @@
                 }
             ];
             
-            // Load challenges data
-            vm.challenges = [
-                {
-                    id: 1,
-                    title: "Tibetan-English Translation Challenge",
-                    description: "Translate Tibetan Buddhist texts to English with high accuracy.",
-                    image: "/media/challenge-images/tibetan-english.jpg",
-                    status: "ongoing",
-                    url: "#/challenge/1"
-                },
-                {
-                    id: 2,
-                    title: "Buddhist QA Challenge",
-                    description: "Answer questions about Buddhist philosophy and texts.",
-                    image: "/media/challenge-images/buddhist-qa.jpg",
-                    status: "ongoing",
-                    url: "#/challenge/2"
-                },
-                {
-                    id: 3,
-                    title: "Tibetan OCR Challenge",
-                    description: "Recognize and digitize Tibetan manuscripts.",
-                    image: "/media/challenge-images/tibetan-ocr.jpg",
-                    status: "upcoming",
-                    url: "#/challenge/3"
-                },
-                {
-                    id: 4,
-                    title: "Pali Translation Challenge",
-                    description: "Translate Pali texts to modern languages.",
-                    image: "/media/challenge-images/pali-translation.jpg",
-                    status: "past",
-                    url: "#/challenge/4"
-                }
-            ];
-            
-            // Count challenges by status
-            vm.ongoingCount = vm.challenges.filter(function(challenge) {
-                return challenge.status === 'ongoing';
-            }).length;
-            
-            vm.upcomingCount = vm.challenges.filter(function(challenge) {
-                return challenge.status === 'upcoming';
-            }).length;
-            
-            vm.pastCount = vm.challenges.filter(function(challenge) {
-                return challenge.status === 'past';
-            }).length;
-            
-            // Set initial filtered challenges
-            vm.setActiveTab(vm.activeTab);
+            // Load challenges data from API
+            vm.fetchChallenges();
             
             // Initialize charts after DOM is ready
             setTimeout(function() {
                 vm.initializeCharts();
             }, 500);
+        };
+        
+        // Format date function
+        vm.formatDate = function(dateString) {
+            if (!dateString) return '';
+            return moment(dateString).format('MMM D, YYYY');
+        };
+        
+        // Fetch challenges from API
+        vm.fetchChallenges = function() {
+            var parameters = {};
+            parameters.url = vm.apiUrl + '/api/challenges/challenge/present/approved/public';
+            parameters.method = 'GET';
+            parameters.callback = {
+                onSuccess: function(response) {
+                    if (response.data && response.data.results) {
+                        vm.challenges = response.data.results.map(function(item) {
+                            // Determine challenge status based on dates
+                            var now = moment();
+                            var startDate = moment(item.start_date);
+                            var endDate = moment(item.end_date);
+                            
+                            var status = 'upcoming';
+                            if (now.isAfter(startDate) && now.isBefore(endDate)) {
+                                status = 'ongoing';
+                            } else if (now.isAfter(endDate)) {
+                                status = 'past';
+                            }
+                            
+                            return {
+                                id: item.id,
+                                title: item.title,
+                                description: item.short_description,
+                                image: item.image,
+                                organizer: item.creator.team_name,
+                                startDate: vm.formatDate(item.start_date),
+                                endDate: vm.formatDate(item.end_date),
+                                status: status,
+                                url: vm.baseUrl + '/web/challenges/challenge-page/' + item.id + '/overview'
+                            };
+                        });
+                        
+                        // Count challenges by status
+                        vm.ongoingCount = vm.challenges.filter(function(challenge) {
+                            return challenge.status === 'ongoing';
+                        }).length;
+                        
+                        vm.upcomingCount = vm.challenges.filter(function(challenge) {
+                            return challenge.status === 'upcoming';
+                        }).length;
+                        
+                        vm.pastCount = vm.challenges.filter(function(challenge) {
+                            return challenge.status === 'past';
+                        }).length;
+                        
+                        // Set initial filtered challenges
+                        vm.setActiveTab(vm.activeTab);
+                    }
+                },
+                onError: function(error) {
+                    console.error('Error fetching challenges:', error);
+                    // Fallback to empty array if API fails
+                    vm.challenges = [];
+                    vm.setActiveTab(vm.activeTab);
+                }
+            };
+            
+            utilities.sendRequest(parameters);
         };
         
         // Set active tab and filter challenges
