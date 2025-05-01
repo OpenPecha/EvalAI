@@ -601,7 +601,7 @@
             name: "web.ai-buddhism-leaderboard",
             parent: "web",
             url: "/ai-buddhism-leaderboard",
-            templateUrl: baseUrl + "/web/ai-buddhism-leaderboard.html",
+            templateUrl: "dist/views/web/ai-buddhism-leaderboard.html",
             controller: 'BuddhismLeaderboardController',
             controllerAs: 'buddhism',
             title: 'AI for Buddhism Leaderboard'
