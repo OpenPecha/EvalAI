@@ -49,29 +49,45 @@
                 }
             ];
             
-            // Load other tasks data
+            // Load other challenges data
             vm.otherChallenges = [
                 {
-                    id: "en-buddhist-qa",
-                    title: "English Buddhist Question Answering",
+                    id: "bo-qa-accuracy",
+                    title: "Tibetan QA Accuracy",
                     metricName: "Answer Accuracy"
                 },
                 {
-                    id: "bo-buddhist-qa",
-                    title: "Tibetan Buddhist Question Answering",
-                    metricName: "Answer Accuracy"
+                    id: "bo-ocr-precision",
+                    title: "Tibetan OCR Precision",
+                    metricName: "Character Precision"
                 },
                 {
-                    id: "bo-manuscript-ocr",
-                    title: "Tibetan Manuscript OCR",
-                    metricName: "Character Accuracy"
+                    id: "bo-ocr-recall",
+                    title: "Tibetan OCR Recall",
+                    metricName: "Character Recall"
                 },
                 {
-                    id: "bo-kham-stt",
-                    title: "Kham Dialect Speech-to-Text",
-                    metricName: "Transcription Accuracy"
+                    id: "bo-text-classification",
+                    title: "Buddhist Text Classification",
+                    metricName: "Classification Accuracy"
                 }
             ];
+            
+            // Test API connection directly
+            console.log('Testing API connection...');
+            $http({
+                method: 'GET',
+                url: vm.apiUrl + '/api/challenges/challenge/present/approved/public',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            }).then(function(response) {
+                console.log('Direct API test successful:', response);
+            }).catch(function(error) {
+                console.error('Direct API test failed:', error);
+                console.log('Will use fallback data for challenges');
+            });
             
             // Load challenges data from API
             vm.fetchChallenges();
@@ -98,7 +114,7 @@
                     id: 1,
                     title: "Tibetan-English Translation Challenge",
                     description: "Translate Tibetan Buddhist texts to English with high accuracy.",
-                    image: "/media/challenge-images/tibetan-english.jpg",
+                    image: "https://placehold.co/600x400?text=Tibetan+English",
                     organizer: "OpenPecha Team",
                     startDate: "May 1, 2025",
                     endDate: "Aug 1, 2025",
@@ -109,7 +125,7 @@
                     id: 2,
                     title: "Buddhist QA Challenge",
                     description: "Answer questions about Buddhist philosophy and texts.",
-                    image: "/media/challenge-images/buddhist-qa.jpg",
+                    image: "https://placehold.co/600x400?text=Buddhist+QA",
                     organizer: "Dharma AI",
                     startDate: "May 15, 2025",
                     endDate: "Jul 15, 2025",
@@ -120,7 +136,7 @@
                     id: 3,
                     title: "Tibetan OCR Challenge",
                     description: "Recognize and digitize Tibetan manuscripts.",
-                    image: "/media/challenge-images/tibetan-ocr.jpg",
+                    image: "https://placehold.co/600x400?text=Tibetan+OCR",
                     organizer: "Buddhist Digital Resource Center",
                     startDate: "Jun 1, 2025",
                     endDate: "Sep 1, 2025",
@@ -131,7 +147,7 @@
                     id: 4,
                     title: "Pali Translation Challenge",
                     description: "Translate Pali texts to modern languages.",
-                    image: "/media/challenge-images/pali-translation.jpg",
+                    image: "https://placehold.co/600x400?text=Pali+Translation",
                     organizer: "Pali Text Society",
                     startDate: "Jan 1, 2025",
                     endDate: "Apr 1, 2025",
@@ -151,33 +167,52 @@
             parameters.callback = {
                 onSuccess: function(response) {
                     console.log('API response received:', response);
+                    
+                    // Check if we have a valid response with data
+                    if (response && response.data) {
+                        console.log('Response data:', response.data);
+                    } else {
+                        console.error('Invalid response format - no data property');
+                    }
+                    
                     if (response.data && response.data.results && response.data.results.length > 0) {
                         console.log('Challenge results:', response.data.results);
-                        vm.challenges = response.data.results.map(function(item) {
-                            // Determine challenge status based on dates
-                            var now = moment();
-                            var startDate = moment(item.start_date);
-                            var endDate = moment(item.end_date);
+                        try {
+                            vm.challenges = response.data.results.map(function(item) {
+                                // Log each item for debugging
+                                console.log('Processing challenge item:', item);
+                                
+                                // Determine challenge status based on dates
+                                var now = moment();
+                                var startDate = moment(item.start_date);
+                                var endDate = moment(item.end_date);
+                                
+                                var status = 'upcoming';
+                                if (now.isAfter(startDate) && now.isBefore(endDate)) {
+                                    status = 'ongoing';
+                                } else if (now.isAfter(endDate)) {
+                                    status = 'past';
+                                }
+                                
+                                // Create the challenge object with safe property access
+                                return {
+                                    id: item.id || 'unknown-id',
+                                    title: item.title || 'Untitled Challenge',
+                                    description: item.short_description || '',
+                                    image: item.image || 'https://placehold.co/600x400?text=Challenge',
+                                    organizer: item.creator && item.creator.team_name ? item.creator.team_name : 'Unknown',
+                                    startDate: vm.formatDate(item.start_date),
+                                    endDate: vm.formatDate(item.end_date),
+                                    status: status,
+                                    url: vm.baseUrl + '/web/challenges/challenge-page/' + (item.id || 0) + '/overview'
+                                };
+                            });
                             
-                            var status = 'upcoming';
-                            if (now.isAfter(startDate) && now.isBefore(endDate)) {
-                                status = 'ongoing';
-                            } else if (now.isAfter(endDate)) {
-                                status = 'past';
-                            }
-                            
-                            return {
-                                id: item.id,
-                                title: item.title,
-                                description: item.short_description || '',
-                                image: item.image || '/media/challenge-images/default.jpg',
-                                organizer: item.creator && item.creator.team_name ? item.creator.team_name : 'Unknown',
-                                startDate: vm.formatDate(item.start_date),
-                                endDate: vm.formatDate(item.end_date),
-                                status: status,
-                                url: vm.baseUrl + '/web/challenges/challenge-page/' + item.id + '/overview'
-                            };
-                        });
+                            console.log('Successfully mapped challenges:', vm.challenges);
+                        } catch (mappingError) {
+                            console.error('Error mapping challenge data:', mappingError);
+                            vm.challenges = fallbackChallenges;
+                        }
                     } else {
                         console.warn('No challenges found in API response or invalid format. Using fallback data.');
                         vm.challenges = fallbackChallenges;
