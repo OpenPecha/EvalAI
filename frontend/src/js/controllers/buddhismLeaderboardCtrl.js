@@ -19,7 +19,7 @@
         vm.upcomingCount = 0;
         vm.pastCount = 0;
         vm.baseUrl = 'https://pecha.services';
-        vm.apiUrl = '/api';
+        vm.apiUrl = 'https://api.pecha.services/api';
         vm.leaderboards = {};
         
         // Initialize the controller
