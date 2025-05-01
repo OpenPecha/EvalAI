@@ -21,7 +21,7 @@
         vm.upcomingCount = 0;
         vm.pastCount = 0;
         vm.baseUrl = 'https://pecha.services';
-        vm.apiUrl = 'https://api.pecha.services';
+        vm.apiUrl = '/api';
         
         // Initialize the controller
         vm.initialize = function() {
@@ -77,7 +77,7 @@
             console.log('Testing API connection...');
             $http({
                 method: 'GET',
-                url: vm.apiUrl + '/api/challenges/challenge/present/approved/public',
+                url: '/api/challenges/challenge/present/approved/public',
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json'
@@ -106,7 +106,7 @@
         
         // Fetch challenges from API
         vm.fetchChallenges = function() {
-            console.log('Fetching challenges from API:', vm.apiUrl + '/api/challenges/challenge/present/approved/public');
+            console.log('Fetching challenges from API:', '/api/challenges/challenge/present/approved/public');
             
             // Fallback data in case API fails
             var fallbackChallenges = [
@@ -157,7 +157,7 @@
             ];
             
             var parameters = {};
-            parameters.url = vm.apiUrl + '/api/challenges/challenge/present/approved/public';
+            parameters.url = '/challenges/challenge/present/approved/public';
             parameters.method = 'GET';
             // Add headers to handle CORS
             parameters.headers = {
