@@ -6,11 +6,13 @@
                 <li><a class="waves-effect waves-dark main-header-link evalai-logo" ui-sref="home" ui-sref-active="active"><img src="https://openpecha.org/_media/logo.svg"></a></li>
                 <li ng-if="!isAuth"><a class="waves-effect waves-dark main-header-link" ui-sref="web.challenge-main">All Challenges</a></li>
                 <!-- <li ng-if="!isAuth"><a class="waves-effect waves-dark main-header-link" href="https://evalai.readthedocs.io/en/latest/" target="_blank">Documentation</a></li> -->
-                <li ng-if="!isAuth"><a class="waves-effect waves-dark main-header-link" href="https://www.vellum.ai/llm-leaderboard" target="_blank">leaderboard</a></li>
+                <li ng-if="!isAuth"><a class="waves-effect waves-dark main-header-link" ui-sref="web.ai-buddhism-leaderboard">Leaderboard</a></li>
+
                 <li ng-if="!isAuth"><a class="waves-effect waves-dark main-header-link" href="https://forum.openpecha.org/" target="_blank">Discuss</a></li>
                 <!-- show after authenticate user -->
                 <li ng-if="isAuth"><a class="waves-effect waves-dark main-header-link" ui-sref="web.dashboard" ui-sref-active="active">Dashboard</a></li>
-                <li ng-if="isAuth"><a class="waves-effect waves-dark main-header-link" href="https://www.vellum.ai/llm-leaderboard" target="_blank">leaderboard</a></li>
+                <li ng-if="isAuth"><a class="waves-effect waves-dark main-header-link" ui-sref="web.ai-buddhism-leaderboard">Leaderboard</a></li>
+
                 <!-- <li ng-if="isAuth"><a class="waves-effect waves-dark main-header-link" href="https://evalai.readthedocs.io/en/latest/" target="_blank">Documentation</a></li> -->
                 <li ng-if="isAuth"><a class="waves-effect waves-dark main-header-link" href="https://forum.openpecha.org/" target="_blank">Discuss</a></li>
             </ul>

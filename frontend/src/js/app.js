@@ -36,4 +36,8 @@ angular
 	}])
 	.config(['$compileProvider', function($compileProvider) {
 		$compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|file|tel|javascript):/);
+	}])
+	// Register Chart.js as an Angular service
+	.factory('Chart', ['$window', function($window) {
+		return $window.Chart;
 	}]);

@@ -596,6 +596,16 @@
             controller: "SubmissionFilesCtrl",
             controllerAs: "submission_files",
         };
+        // AI Buddhism Leaderboard route
+        var ai_buddhism_leaderboard = {
+            name: "web.ai-buddhism-leaderboard",
+            parent: "web",
+            url: "/ai-buddhism-leaderboard",
+            templateUrl: baseUrl + "/web/ai-buddhism-leaderboard.html",
+            controller: 'BuddhismLeaderboardController',
+            controllerAs: 'buddhism',
+            title: 'AI for Buddhism Leaderboard'
+        };
 
         // call all states here
         $stateProvider.state(home);
@@ -669,6 +679,8 @@
         $stateProvider.state(contact_us);
         $stateProvider.state(challengeInvitation);
         $stateProvider.state(get_submission_related_files);
+        // challenge leaderboard
+        $stateProvider.state(ai_buddhism_leaderboard);
 
         $stateProvider.state(manage);
 

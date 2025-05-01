@@ -720,6 +720,7 @@ def get_all_challenges(request, challenge_time, challenge_approved, challenge_pu
         result_page, many=True, context={"request": request}
     )
     response_data = serializer.data
+    print(response_data)
     return paginator.get_paginated_response(response_data)
 
 

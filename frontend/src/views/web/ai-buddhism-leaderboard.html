@@ -1,0 +1,140 @@
+<section class="ev-sm-container ev-view challenge-container">
+    <div class="ev-md-container ev-card-panel ev-z-depth-5 ev-challenge-view">
+        <div class="row margin-bottom-cancel">
+            <div class="col s12">
+                <h5 class="w-300">AI for Buddhism Leaderboard</h5>
+            </div>
+        </div>
+        
+        <!-- Leaderboard Section -->
+        <div class="row">
+            <div class="col s12">
+                <div class="card-panel">
+                    <h5 class="text-center">Translation Tasks</h5>
+                    
+                    <!-- Horizontal scrollable section for translation tasks -->
+                    <div class="horizontal-scroll">
+                        <div class="row">
+                            <!-- Tibetan-English Translation Factuality -->
+                            <div class="col s12 m6 l3" ng-repeat="challenge in buddhism.translationChallenges">
+                                <div class="card">
+                                    <div class="card-content">
+                                        <span class="card-title">{{challenge.title}}</span>
+                                        <canvas id="{{challenge.id}}-chart" height="200"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Navigation buttons -->
+                    <div class="row">
+                        <div class="col s12 center-align">
+                            <button class="btn waves-effect waves-light" ng-click="buddhism.scrollSection('translation', 'left')">
+                                <i class="material-icons">chevron_left</i>
+                            </button>
+                            <button class="btn waves-effect waves-light" ng-click="buddhism.scrollSection('translation', 'right')">
+                                <i class="material-icons">chevron_right</i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Other Tasks Section -->
+        <div class="row">
+            <div class="col s12">
+                <div class="card-panel">
+                    <h5 class="text-center">Other Tasks</h5>
+                    
+                    <!-- Horizontal scrollable section for other tasks -->
+                    <div class="horizontal-scroll">
+                        <div class="row">
+                            <div class="col s12 m6 l3" ng-repeat="challenge in buddhism.otherChallenges">
+                                <div class="card">
+                                    <div class="card-content">
+                                        <span class="card-title">{{challenge.title}}</span>
+                                        <canvas id="{{challenge.id}}-chart" height="200"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Navigation buttons -->
+                    <div class="row">
+                        <div class="col s12 center-align">
+                            <button class="btn waves-effect waves-light" ng-click="buddhism.scrollSection('otherTasks', 'left')">
+                                <i class="material-icons">chevron_left</i>
+                            </button>
+                            <button class="btn waves-effect waves-light" ng-click="buddhism.scrollSection('otherTasks', 'right')">
+                                <i class="material-icons">chevron_right</i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Challenges Section -->
+        <div class="row">
+            <div class="col s12">
+                <div class="card-panel">
+                    <h5 class="text-center">Challenges</h5>
+                    
+                    <!-- Tab Navigation -->
+                    <div class="row">
+                        <div class="col s12">
+                            <ul class="tabs">
+                                <li class="tab col s4">
+                                    <a ng-class="{'active': buddhism.activeTab === 'ongoing'}" 
+                                       ng-click="buddhism.setActiveTab('ongoing')">
+                                       Ongoing ({{buddhism.ongoingCount}})
+                                    </a>
+                                </li>
+                                <li class="tab col s4">
+                                    <a ng-class="{'active': buddhism.activeTab === 'upcoming'}" 
+                                       ng-click="buddhism.setActiveTab('upcoming')">
+                                       Upcoming ({{buddhism.upcomingCount}})
+                                    </a>
+                                </li>
+                                <li class="tab col s4">
+                                    <a ng-class="{'active': buddhism.activeTab === 'past'}" 
+                                       ng-click="buddhism.setActiveTab('past')">
+                                       Past ({{buddhism.pastCount}})
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <!-- Challenge Cards -->
+                    <div class="row" ng-if="buddhism.filteredChallenges.length > 0">
+                        <div class="col s12 m6 l3" ng-repeat="challenge in buddhism.filteredChallenges">
+                            <div class="card">
+                                <div class="card-image">
+                                    <img ng-src="{{challenge.image}}" alt="{{challenge.title}}">
+                                </div>
+                                <div class="card-content">
+                                    <span class="card-title">{{challenge.title}}</span>
+                                    <p>{{challenge.description}}</p>
+                                </div>
+                                <div class="card-action">
+                                    <a ng-href="{{challenge.url}}">View Challenge</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- No challenges message -->
+                    <div class="row" ng-if="buddhism.filteredChallenges.length === 0">
+                        <div class="col s12 center-align">
+                            <p>No {{buddhism.activeTab}} challenges at the moment.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
