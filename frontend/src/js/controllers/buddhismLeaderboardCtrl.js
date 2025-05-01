@@ -19,7 +19,7 @@
         vm.upcomingCount = 0;
         vm.pastCount = 0;
         vm.baseUrl = 'https://pecha.services';
-        vm.apiUrl = 'https://api.pecha.services/api';
+        vm.apiUrl = 'https://api.pecha.services/api/'; // Added trailing slash
         vm.leaderboards = {};
         
         // Initialize the controller
@@ -130,7 +130,7 @@
         
         // Fetch challenges from API
         vm.fetchChallenges = function() {
-            console.log('Fetching challenges from API:', vm.apiUrl + '/challenges/challenge/present/approved/public');
+            console.log('Fetching challenges from API:', vm.apiUrl + 'challenges/challenge/present/approved/public');
             
             // Fallback data in case API fails
             var fallbackChallenges = [
@@ -162,7 +162,7 @@
             
             // Set up request parameters
             var parameters = {};
-            parameters.url = vm.apiUrl + '/challenges/challenge/present/approved/public';
+            parameters.url = vm.apiUrl + 'challenges/challenge/present/approved/public';
             parameters.method = 'GET';
             parameters.data = {};
             parameters.callback = {
@@ -312,7 +312,7 @@
             
             // Step 1: Get challenge phases
             var phaseParams = {};
-            phaseParams.url = vm.apiUrl + '/challenges/challenge/' + challengeId + '/challenge_phase';
+            phaseParams.url = vm.apiUrl + 'challenges/challenge/' + challengeId + '/challenge_phase';
             phaseParams.method = 'GET';
             phaseParams.callback = {
                 onSuccess: function(phaseResponse) {
@@ -325,7 +325,7 @@
                         
                         // Step 2: Get phase splits
                         var splitParams = {};
-                        splitParams.url = vm.apiUrl + '/challenges/challenge/' + challengeId + '/challenge_phase_split';
+                        splitParams.url = vm.apiUrl + 'challenges/challenge/' + challengeId + '/challenge_phase_split';
                         splitParams.method = 'GET';
                         splitParams.callback = {
                             onSuccess: function(splitResponse) {
@@ -343,7 +343,7 @@
                                         
                                         // Step 3: Get leaderboard data
                                         var leaderboardParams = {};
-                                        leaderboardParams.url = vm.apiUrl + '/jobs/challenge_phase_split/' + splitId + '/leaderboard/';
+                                        leaderboardParams.url = vm.apiUrl + 'jobs/challenge_phase_split/' + splitId + '/leaderboard/';
                                         leaderboardParams.method = 'GET';
                                         leaderboardParams.callback = {
                                             onSuccess: function(leaderboardResponse) {
