@@ -155,7 +155,7 @@
         // Initialize charts for each challenge
         vm.initializeCharts = function() {
             // Sample data for charts
-            var createChartData = function(challengeId) {
+            var createChartData = function() {
                 return {
                     labels: ['GPT-4', 'Claude 3', 'Llama 3', 'Gemini', 'Mistral'],
                     datasets: [{
