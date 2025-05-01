@@ -22,6 +22,7 @@
         vm.pastCount = 0;
         vm.baseUrl = 'https://pecha.services';
         vm.apiUrl = '/api';
+        vm.leaderboards = {};
         
         // Initialize the controller
         vm.initialize = function() {
@@ -106,7 +107,7 @@
         
         // Fetch challenges from API
         vm.fetchChallenges = function() {
-            console.log('Fetching challenges from API:', '/api/challenges/challenge/present/approved/public');
+            console.log('Fetching challenges from API:', vm.apiUrl + '/challenges/challenge/present/approved/public');
             
             // Fallback data in case API fails
             var fallbackChallenges = [
@@ -236,6 +237,15 @@
                     
                     // Set initial filtered challenges
                     vm.setActiveTab(vm.activeTab);
+                    
+                    // Fetch leaderboard data for each challenge
+                    vm.challenges.forEach(function(challenge) {
+                        vm.getLeaderboardForChallenge(challenge.id, function(leaderboardData) {
+                            if (leaderboardData && leaderboardData.length > 0) {
+                                challenge.leaderboard = leaderboardData;
+                            }
+                        });
+                    });
                 },
                 onError: function(error) {
                     console.error('Error fetching challenges:', error);
@@ -289,6 +299,7 @@
         // Set active tab and filter challenges
         vm.setActiveTab = function(tab) {
             vm.activeTab = tab;
+            
             vm.filteredChallenges = vm.challenges.filter(function(challenge) {
                 return challenge.status === tab;
             });
@@ -296,103 +307,202 @@
         
         // Scroll section horizontally
         vm.scrollSection = function(section, direction) {
-            var element;
-            if (section === 'translation') {
-                element = document.querySelector('.horizontal-scroll');
-            } else {
-                element = document.querySelectorAll('.horizontal-scroll')[1];
-            }
-            
+            var element = document.querySelector('.horizontal-scroll');
             if (!element) return;
             
-            var scrollAmount = direction === 'right' ? 360 : -360;
+            var scrollAmount = direction === 'left' ? -300 : 300;
             element.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+        };
+        
+        // Function to get leaderboard data for a specific challenge
+        vm.getLeaderboardForChallenge = function(challengeId, callback) {
+            console.log('Fetching leaderboard for challenge ID:', challengeId);
+            
+            // Step 1: Get challenge phases
+            var phaseParams = {};
+            phaseParams.url = '/challenges/challenge/' + challengeId + '/challenge_phase';
+            phaseParams.method = 'GET';
+            phaseParams.callback = {
+                onSuccess: function(phaseResponse) {
+                    console.log('Challenge phases received:', phaseResponse);
+                    
+                    if (phaseResponse.data && phaseResponse.data.results && phaseResponse.data.results.length > 0) {
+                        // Get the first phase ID
+                        var phaseId = phaseResponse.data.results[0].id;
+                        console.log('Using phase ID:', phaseId);
+                        
+                        // Step 2: Get phase splits
+                        var splitParams = {};
+                        splitParams.url = '/challenges/challenge/' + challengeId + '/challenge_phase_split';
+                        splitParams.method = 'GET';
+                        splitParams.callback = {
+                            onSuccess: function(splitResponse) {
+                                console.log('Phase splits received:', splitResponse);
+                                
+                                if (splitResponse.data && splitResponse.data.results && splitResponse.data.results.length > 0) {
+                                    // Find a split that contains our phase
+                                    var relevantSplits = splitResponse.data.results.filter(function(split) {
+                                        return split.challenge_phase === phaseId;
+                                    });
+                                    
+                                    if (relevantSplits.length > 0) {
+                                        var splitId = relevantSplits[0].id;
+                                        console.log('Using split ID:', splitId);
+                                        
+                                        // Step 3: Get leaderboard data
+                                        var leaderboardParams = {};
+                                        leaderboardParams.url = '/jobs/challenge_phase_split/' + splitId + '/leaderboard/';
+                                        leaderboardParams.method = 'GET';
+                                        leaderboardParams.callback = {
+                                            onSuccess: function(leaderboardResponse) {
+                                                console.log('Leaderboard data received:', leaderboardResponse);
+                                                
+                                                if (leaderboardResponse.data && leaderboardResponse.data.results) {
+                                                    // Return the leaderboard data through callback
+                                                    if (callback) {
+                                                        callback(leaderboardResponse.data.results);
+                                                    }
+                                                } else {
+                                                    console.warn('No leaderboard data found');
+                                                    if (callback) {
+                                                        callback([]);
+                                                    }
+                                                }
+                                            },
+                                            onError: function(error) {
+                                                console.error('Error fetching leaderboard data:', error);
+                                                if (callback) {
+                                                    callback([]);
+                                                }
+                                            }
+                                        };
+                                        
+                                        utilities.sendRequest(leaderboardParams);
+                                    } else {
+                                        console.warn('No relevant phase splits found for phase ID:', phaseId);
+                                        if (callback) {
+                                            callback([]);
+                                        }
+                                    }
+                                } else {
+                                    console.warn('No phase splits found');
+                                    if (callback) {
+                                        callback([]);
+                                    }
+                                }
+                            },
+                            onError: function(error) {
+                                console.error('Error fetching phase splits:', error);
+                                if (callback) {
+                                    callback([]);
+                                }
+                            }
+                        };
+                        
+                        utilities.sendRequest(splitParams);
+                    } else {
+                        console.warn('No phases found for challenge');
+                        if (callback) {
+                            callback([]);
+                        }
+                    }
+                },
+                onError: function(error) {
+                    console.error('Error fetching challenge phases:', error);
+                    if (callback) {
+                        callback([]);
+                    }
+                }
+            };
+            
+            utilities.sendRequest(phaseParams);
+        };
+        
+        // Plot leaderboard data for a specific challenge
+        vm.plotLeaderboardData = function(challengeId, chartElementId) {
+            // Get the leaderboard data
+            vm.getLeaderboardForChallenge(challengeId, function(leaderboardData) {
+                if (leaderboardData && leaderboardData.length > 0) {
+                    console.log('Plotting leaderboard data for challenge:', challengeId);
+                    
+                    // Get the canvas element
+                    var ctx = document.getElementById(chartElementId);
+                    if (!ctx) {
+                        console.error('Chart element not found:', chartElementId);
+                        return;
+                    }
+                    
+                    // Prepare data for chart
+                    var labels = [];
+                    var scores = [];
+                    
+                    // Get top 5 entries (or fewer if less available)
+                    var topEntries = leaderboardData.slice(0, 5);
+                    
+                    // Extract data for chart
+                    topEntries.forEach(function(entry) {
+                        // Use team name or participant team ID if name not available
+                        var teamName = entry.submission__participant_team__team_name || 
+                                      ('Team ' + entry.submission__participant_team);
+                        labels.push(teamName);
+                        scores.push(parseFloat(entry.score));
+                    });
+                    
+                    // Create chart
+                    new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Score',
+                                data: scores,
+                                backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                                borderColor: 'rgba(54, 162, 235, 1)',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            scales: {
+                                y: {
+                                    beginAtZero: false,
+                                    min: Math.max(0, Math.min.apply(null, scores) * 0.9),
+                                    max: Math.max.apply(null, scores) * 1.1
+                                }
+                            },
+                            plugins: {
+                                legend: {
+                                    display: false
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Leaderboard Scores'
+                                }
+                            }
+                        }
+                    });
+                    
+                    console.log('Chart created successfully');
+                } else {
+                    console.warn('No leaderboard data available for challenge:', challengeId);
+                }
+            });
         };
         
         // Initialize charts for each challenge
         vm.initializeCharts = function() {
-            // Sample data for charts
-            var createChartData = function() {
-                return {
-                    labels: ['GPT-4', 'Claude 3', 'Llama 3', 'Gemini', 'Mistral'],
-                    datasets: [{
-                        label: 'Performance',
-                        data: [
-                            Math.random() * 30 + 70, // Random score between 70-100
-                            Math.random() * 30 + 70,
-                            Math.random() * 30 + 70,
-                            Math.random() * 30 + 70,
-                            Math.random() * 30 + 70
-                        ],
-                        backgroundColor: [
-                            'rgba(255, 99, 132, 0.2)',
-                            'rgba(54, 162, 235, 0.2)',
-                            'rgba(255, 206, 86, 0.2)',
-                            'rgba(75, 192, 192, 0.2)',
-                            'rgba(153, 102, 255, 0.2)'
-                        ],
-                        borderColor: [
-                            'rgba(255, 99, 132, 1)',
-                            'rgba(54, 162, 235, 1)',
-                            'rgba(255, 206, 86, 1)',
-                            'rgba(75, 192, 192, 1)',
-                            'rgba(153, 102, 255, 1)'
-                        ],
-                        borderWidth: 1
-                    }]
-                };
-            };
+            console.log('Initializing charts for challenges');
             
-            // Create charts for translation challenges
+            // Initialize charts for translation challenges
             vm.translationChallenges.forEach(function(challenge) {
-                var ctx = document.getElementById(challenge.id + '-chart');
-                if (ctx) {
-                    new Chart(ctx, {
-                        type: 'bar',
-                        data: createChartData(challenge.id),
-                        options: {
-                            scales: {
-                                y: {
-                                    beginAtZero: false,
-                                    min: 60,
-                                    max: 100
-                                }
-                            },
-                            plugins: {
-                                title: {
-                                    display: true,
-                                    text: challenge.metricName
-                                }
-                            }
-                        }
-                    });
-                }
+                // Plot leaderboard data for this challenge
+                vm.plotLeaderboardData(challenge.id, challenge.id + '-chart');
             });
             
-            // Create charts for other challenges
+            // Initialize charts for other challenges
             vm.otherChallenges.forEach(function(challenge) {
-                var ctx = document.getElementById(challenge.id + '-chart');
-                if (ctx) {
-                    new Chart(ctx, {
-                        type: 'bar',
-                        data: createChartData(challenge.id),
-                        options: {
-                            scales: {
-                                y: {
-                                    beginAtZero: false,
-                                    min: 60,
-                                    max: 100
-                                }
-                            },
-                            plugins: {
-                                title: {
-                                    display: true,
-                                    text: challenge.metricName
-                                }
-                            }
-                        }
-                    });
-                }
+                // Plot leaderboard data for this challenge
+                vm.plotLeaderboardData(challenge.id, challenge.id + '-chart');
             });
         };
         
