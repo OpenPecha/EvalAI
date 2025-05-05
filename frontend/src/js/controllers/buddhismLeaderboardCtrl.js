@@ -415,9 +415,9 @@
                             onSuccess: function(splitResponse) {
                                 console.log('Phase splits received:', splitResponse);
                                 
-                                if (splitResponse.data && splitResponse.data.results && splitResponse.data.results.length > 0) {
+                                if (splitResponse.data && splitResponse.data && splitResponse.data.length > 0) {
                                     // Find a split that contains our phase
-                                    var relevantSplits = splitResponse.data.results.filter(function(split) {
+                                    var relevantSplits = splitResponse.data.filter(function(split) {
                                         return split.challenge_phase === phaseId;
                                     });
                                     
