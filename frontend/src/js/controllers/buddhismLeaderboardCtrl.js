@@ -418,13 +418,13 @@
                                 if (splitResponse.data && splitResponse.data && splitResponse.data.length > 0) {
 
                                     var splits = splitResponse.data;  // not splitResponse.data.results
-                                    console.log('checking splits data:', splits)
 
-                                    // Find a split that contains our phase
-                                    var relevantSplits = splits.filter(function(split) {
-                                        return split.challenge_phase === phaseId;
-                                    });
-                                    console.log('checking relevantSplits data:', relevantSplits)
+                                    // // Find a split that contains our phase
+                                    // var relevantSplits = splits.filter(function(split) {
+                                    //     return split.challenge_phase === phaseId;
+                                    // });
+                                    // console.log('checking relevantSplits data:', relevantSplits)
+                                    relevantSplits = splits
                                     
                                     if (relevantSplits.length) {
                                         var splitId = relevantSplits[0].id;
