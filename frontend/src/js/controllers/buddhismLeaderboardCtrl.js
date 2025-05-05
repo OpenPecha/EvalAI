@@ -416,12 +416,17 @@
                                 console.log('Phase splits received:', splitResponse);
                                 
                                 if (splitResponse.data && splitResponse.data && splitResponse.data.length > 0) {
+
+                                    var splits = splitResponse.data;  // not splitResponse.data.results
+                                    console.log('checking splits data:', splits)
+
                                     // Find a split that contains our phase
-                                    var relevantSplits = splitResponse.data.filter(function(split) {
+                                    var relevantSplits = splits.filter(function(split) {
                                         return split.challenge_phase === phaseId;
                                     });
+                                    console.log('checking relevantSplits data:', relevantSplits)
                                     
-                                    if (relevantSplits.length > 0) {
+                                    if (relevantSplits.length) {
                                         var splitId = relevantSplits[0].id;
                                         console.log('Using split ID:', splitId);
                                         
