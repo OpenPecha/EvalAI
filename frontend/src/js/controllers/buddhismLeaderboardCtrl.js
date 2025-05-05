@@ -394,6 +394,17 @@
             
             console.log('Fetching leaderboard for challenge ID:', challengeId);
             
+            // Find the challenge object to get the title
+            var challengeTitle = '';
+            var challengeObj = vm.challenges.find(function(c) {
+                return c.id == challengeId;
+            });
+            
+            if (challengeObj) {
+                challengeTitle = challengeObj.title;
+                console.log('Found challenge title:', challengeTitle);
+            }
+            
             // Step 1: Get challenge phases
             var phaseParams = {};
             phaseParams.url = 'challenges/challenge/' + challengeId + '/challenge_phase';
@@ -416,15 +427,8 @@
                                 console.log('Phase splits received:', splitResponse);
                                 
                                 if (splitResponse.data && splitResponse.data && splitResponse.data.length > 0) {
-
-                                    var splits = splitResponse.data;  // not splitResponse.data.results
-
-                                    // // Find a split that contains our phase
-                                    // var relevantSplits = splits.filter(function(split) {
-                                    //     return split.challenge_phase === phaseId;
-                                    // });
-                                    // console.log('checking relevantSplits data:', relevantSplits)
-                                    var relevantSplits = splits
+                                    var splits = splitResponse.data;
+                                    var relevantSplits = splits;
                                     
                                     if (relevantSplits.length) {
                                         var splitId = relevantSplits[0].id;
@@ -439,12 +443,29 @@
                                                 console.log('Leaderboard data received:', leaderboardResponse);
                                                 
                                                 if (leaderboardResponse.data && leaderboardResponse.data.results) {
-                                                    // Store the leaderboard data
-                                                    vm.leaderboards[challengeId] = leaderboardResponse.data.results;
+                                                    // Process and store the leaderboard data with enhanced information
+                                                    var processedData = {
+                                                        challengeId: challengeId,
+                                                        challengeTitle: challengeTitle,
+                                                        entries: leaderboardResponse.data.results.map(function(entry) {
+                                                            return {
+                                                                methodName: entry.submission__method_name || 'Unknown Method',
+                                                                teamName: entry.submission__participant_team__team_name || ('Team ' + entry.submission__participant_team),
+                                                                score: entry.score,
+                                                                result: entry.result || [entry.score], // Use result if available, otherwise use score
+                                                                submittedAt: entry.submission__submitted_at,
+                                                                schemaLabels: entry.leaderboard__schema && entry.leaderboard__schema.labels ? 
+                                                                              entry.leaderboard__schema.labels : ['Score']
+                                                            };
+                                                        })
+                                                    };
+                                                    
+                                                    // Store the processed leaderboard data
+                                                    vm.leaderboards[challengeId] = processedData;
                                                     
                                                     // Return the leaderboard data through callback
                                                     if (callback) {
-                                                        callback(leaderboardResponse.data.results);
+                                                        callback(processedData);
                                                     }
                                                 } else {
                                                     console.warn('No leaderboard data found');
@@ -505,72 +526,162 @@
         // Plot leaderboard data for a specific challenge
         vm.plotLeaderboardData = function(challengeId, chartElementId) {
             // Get the leaderboard data
-            vm.getLeaderboardForChallenge(challengeId, function(leaderboardData) {
-                if (leaderboardData && leaderboardData.length > 0) {
-                    console.log('Plotting leaderboard data for challenge:', challengeId);
-                    
-                    // Get the canvas element
-                    var ctx = document.getElementById(chartElementId);
-                    if (!ctx) {
-                        console.error('Chart element not found:', chartElementId);
-                        return;
+            if (vm.leaderboards[challengeId]) {
+                // Use cached data if available
+                var leaderboardData = vm.leaderboards[challengeId];
+                vm.renderLeaderboardChart(leaderboardData, chartElementId);
+            } else {
+                // Fetch data if not available
+                vm.getLeaderboardForChallenge(challengeId, function(leaderboardData) {
+                    if (leaderboardData && leaderboardData.entries && leaderboardData.entries.length > 0) {
+                        vm.renderLeaderboardChart(leaderboardData, chartElementId);
+                    } else {
+                        console.warn('No leaderboard data available for challenge:', challengeId);
                     }
-                    
-                    // Prepare data for chart
-                    var labels = [];
-                    var scores = [];
-                    
-                    // Get top 5 entries (or fewer if less available)
-                    var topEntries = leaderboardData.slice(0, 5);
-                    
-                    // Extract data for chart
-                    topEntries.forEach(function(entry) {
-                        // Use team name or participant team ID if name not available
-                        var teamName = entry.submission__participant_team__team_name || 
-                                      ('Team ' + entry.submission__participant_team);
-                        labels.push(teamName);
-                        scores.push(parseFloat(entry.score));
+                });
+            }
+        };
+        
+        // Render the leaderboard chart with the provided data
+        vm.renderLeaderboardChart = function(leaderboardData, chartElementId) {
+            console.log('Rendering chart for challenge:', leaderboardData.challengeId, 'with data:', leaderboardData);
+            
+            // Get the canvas element
+            var ctx = document.getElementById(chartElementId);
+            if (!ctx) {
+                console.error('Chart element not found:', chartElementId);
+                return;
+            }
+            
+            // Get top 5 entries (or fewer if less available)
+            var topEntries = leaderboardData.entries.slice(0, 5);
+            
+            // Prepare data for chart
+            var labels = [];
+            var datasets = [];
+            var metricLabels = [];
+            
+            // Check if we have multiple metrics
+            var hasMultipleMetrics = false;
+            if (topEntries.length > 0) {
+                var firstEntry = topEntries[0];
+                if (Array.isArray(firstEntry.result) && firstEntry.result.length > 1) {
+                    hasMultipleMetrics = true;
+                    metricLabels = firstEntry.schemaLabels.length >= firstEntry.result.length ? 
+                                  firstEntry.schemaLabels.slice(0, firstEntry.result.length) : 
+                                  firstEntry.result.map(function(_, i) { return 'Metric ' + (i+1); });
+                } else {
+                    metricLabels = ['Score'];
+                }
+            }
+            
+            // Extract method names for labels
+            topEntries.forEach(function(entry) {
+                labels.push(entry.methodName || 'Unknown Method');
+            });
+            
+            // Create datasets based on metrics
+            if (hasMultipleMetrics) {
+                // Create a dataset for each metric
+                for (var i = 0; i < metricLabels.length; i++) {
+                    var metricData = topEntries.map(function(entry) {
+                        return Array.isArray(entry.result) && i < entry.result.length ? 
+                               parseFloat(entry.result[i]) : 0;
                     });
                     
-                    // Create chart
-                    new Chart(ctx, {
-                        type: 'bar',
-                        data: {
-                            labels: labels,
-                            datasets: [{
-                                label: 'Score',
-                                data: scores,
-                                backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                                borderColor: 'rgba(54, 162, 235, 1)',
-                                borderWidth: 1
-                            }]
+                    datasets.push({
+                        label: metricLabels[i],
+                        data: metricData,
+                        backgroundColor: getColorForIndex(i, 0.5),
+                        borderColor: getColorForIndex(i, 1),
+                        borderWidth: 1
+                    });
+                }
+            } else {
+                // Single metric - create one dataset
+                var scoreData = topEntries.map(function(entry) {
+                    return Array.isArray(entry.result) ? 
+                           parseFloat(entry.result[0]) : 
+                           parseFloat(entry.score);
+                });
+                
+                datasets.push({
+                    label: metricLabels[0],
+                    data: scoreData,
+                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                });
+            }
+            
+            // Helper function to get colors for multiple datasets
+            function getColorForIndex(index, alpha) {
+                var colors = [
+                    'rgba(54, 162, 235, ' + alpha + ')', // blue
+                    'rgba(255, 99, 132, ' + alpha + ')', // red
+                    'rgba(255, 206, 86, ' + alpha + ')', // yellow
+                    'rgba(75, 192, 192, ' + alpha + ')',  // green
+                    'rgba(153, 102, 255, ' + alpha + ')', // purple
+                    'rgba(255, 159, 64, ' + alpha + ')'   // orange
+                ];
+                return colors[index % colors.length];
+            }
+            
+            // Create chart
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: datasets
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            // Set min/max based on data range
+                            min: function() {
+                                var allValues = [];
+                                datasets.forEach(function(dataset) {
+                                    allValues = allValues.concat(dataset.data);
+                                });
+                                return Math.max(0, Math.min.apply(null, allValues) * 0.9);
+                            }(),
+                            max: function() {
+                                var allValues = [];
+                                datasets.forEach(function(dataset) {
+                                    allValues = allValues.concat(dataset.data);
+                                });
+                                return Math.max.apply(null, allValues) * 1.1;
+                            }()
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: hasMultipleMetrics, // Only show legend if multiple metrics
+                            position: 'top'
                         },
-                        options: {
-                            responsive: true,
-                            scales: {
-                                y: {
-                                    beginAtZero: false,
-                                    min: Math.max(0, Math.min.apply(null, scores) * 0.9),
-                                    max: Math.max.apply(null, scores) * 1.1
-                                }
-                            },
-                            plugins: {
-                                legend: {
-                                    display: false
-                                },
-                                title: {
-                                    display: true,
-                                    text: 'Leaderboard Scores'
+                        title: {
+                            display: true,
+                            text: leaderboardData.challengeTitle || 'Leaderboard Scores'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    var label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    label += context.parsed.y.toFixed(3);
+                                    return label;
                                 }
                             }
                         }
-                    });
-                    
-                    console.log('Chart created successfully');
-                } else {
-                    console.warn('No leaderboard data available for challenge:', challengeId);
+                    }
                 }
             });
+            
+            console.log('Chart created successfully');
         };
         
         // Initialize charts for each challenge
