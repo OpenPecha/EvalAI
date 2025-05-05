@@ -424,7 +424,7 @@
                                     //     return split.challenge_phase === phaseId;
                                     // });
                                     // console.log('checking relevantSplits data:', relevantSplits)
-                                    relevantSplits = splits
+                                    var relevantSplits = splits
                                     
                                     if (relevantSplits.length) {
                                         var splitId = relevantSplits[0].id;
