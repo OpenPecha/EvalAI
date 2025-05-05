@@ -396,7 +396,7 @@
             
             // Step 1: Get challenge phases
             var phaseParams = {};
-            phaseParams.url = '/challenges/challenge/' + challengeId + '/challenge_phase';
+            phaseParams.url = 'challenges/challenge/' + challengeId + '/challenge_phase';
             phaseParams.method = 'GET';
             phaseParams.callback = {
                 onSuccess: function(phaseResponse) {
@@ -409,7 +409,7 @@
                         
                         // Step 2: Get phase splits
                         var splitParams = {};
-                        splitParams.url = '/challenges/challenge/' + challengeId + '/challenge_phase_split';
+                        splitParams.url = 'challenges/challenge/' + challengeId + '/challenge_phase_split';
                         splitParams.method = 'GET';
                         splitParams.callback = {
                             onSuccess: function(splitResponse) {
