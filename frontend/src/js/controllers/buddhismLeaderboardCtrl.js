@@ -1,218 +1,286 @@
-// Js for Buddhism Leaderboard page
+// Controller for AI Buddhism Leaderboard
 (function() {
     'use strict';
-    
-    angular.module('evalai').controller('BuddhismLeaderboardController', BuddhismLeaderboardController);
-    
-    BuddhismLeaderboardController.$inject = ['utilities', '$scope', '$timeout'];
-    
-    function BuddhismLeaderboardController(utilities, $scope, $timeout) {
+
+    angular
+        .module('evalai')
+        .controller('BuddhismLeaderboardController', BuddhismLeaderboardController);
+
+    BuddhismLeaderboardController.$inject = ['$scope', '$state', '$http', 'utilities', 'moment', 'Chart'];
+
+    function BuddhismLeaderboardController($scope, $state, $http, utilities, moment, Chart) {
         var vm = this;
         
-        // Variables
-        vm.challenges = [];
-        vm.filteredChallenges = [];
+        // Initialize variables
+        vm.activeTab = 'ongoing';
         vm.translationChallenges = [];
         vm.otherChallenges = [];
-        vm.activeTab = 'ongoing';
+        vm.challenges = [];
+        vm.filteredChallenges = [];
         vm.ongoingCount = 0;
         vm.upcomingCount = 0;
         vm.pastCount = 0;
         vm.baseUrl = 'https://pecha.services';
-        vm.apiUrl = 'https://api.pecha.services/api/'; // Added trailing slash
+        vm.apiUrl = '/api'; // Using relative path for API
         vm.leaderboards = {};
         
         // Initialize the controller
         vm.initialize = function() {
-            console.log('Initializing Buddhism Leaderboard Controller');
-            
-            // Set up translation challenges
+            // Load translation challenges data
             vm.translationChallenges = [
                 {
-                    id: 'bo-en-factuality',
-                    title: 'Tibetan to English Translation (Factuality)',
-                    description: 'This challenge evaluates the factual accuracy of Tibetan to English translations.',
-                    status: 'ongoing',
-                    startDate: '2025-01-01',
-                    endDate: '2025-12-31',
+                    id: "bo-en-factuality",
+                    title: "Tibetan-English Translation Factuality",
+                    metricName: "Factual Accuracy",
+                    description: "This challenge evaluates the factual accuracy of Tibetan to English translations.",
+                    status: "ongoing",
+                    startDate: "May 1, 2025",
+                    endDate: "Aug 1, 2025",
                     participants: 12,
-                    metricName: 'Factuality Score'
+                    organizer: "OpenPecha Team",
+                    image: "https://placehold.co/600x400?text=Tibetan+English",
+                    url: vm.baseUrl + "/web/challenges/challenge-page/1/overview"
                 },
                 {
-                    id: 'bo-en-literal',
-                    title: 'Tibetan to English Translation (Literal)',
-                    description: 'This challenge evaluates the literal accuracy of Tibetan to English translations.',
-                    status: 'ongoing',
-                    startDate: '2025-01-01',
-                    endDate: '2025-12-31',
+                    id: "bo-en-literal",
+                    title: "Tibetan-English Literal Translation",
+                    metricName: "Literal Score",
+                    description: "This challenge evaluates the literal accuracy of Tibetan to English translations.",
+                    status: "ongoing",
+                    startDate: "May 1, 2025",
+                    endDate: "Aug 1, 2025",
                     participants: 10,
-                    metricName: 'Literal Score'
+                    organizer: "Dharma AI",
+                    image: "https://placehold.co/600x400?text=Buddhist+QA",
+                    url: vm.baseUrl + "/web/challenges/challenge-page/2/overview"
                 },
                 {
-                    id: 'bo-zh-readable',
-                    title: 'Tibetan to Chinese Translation (Readability)',
-                    description: 'This challenge evaluates the readability of Tibetan to Chinese translations.',
-                    status: 'ongoing',
-                    startDate: '2025-01-01',
-                    endDate: '2025-12-31',
+                    id: "bo-zh-readable",
+                    title: "Tibetan-Chinese Readable Translation",
+                    metricName: "Readability Score",
+                    description: "This challenge evaluates the readability of Tibetan to Chinese translations.",
+                    status: "ongoing",
+                    startDate: "May 1, 2025",
+                    endDate: "Aug 1, 2025",
                     participants: 8,
-                    metricName: 'Readability Score'
+                    organizer: "Buddhist Digital Resource Center",
+                    image: "https://placehold.co/600x400?text=Tibetan+OCR",
+                    url: vm.baseUrl + "/web/challenges/challenge-page/3/overview"
                 },
                 {
-                    id: 'pi-bo-sutra',
-                    title: 'Pali to Tibetan Sutra Translation',
-                    description: 'This challenge evaluates the accuracy of Pali to Tibetan sutra translations.',
-                    status: 'ongoing',
-                    startDate: '2025-01-01',
-                    endDate: '2025-12-31',
+                    id: "pi-bo-sutra",
+                    title: "Pali-Tibetan Sutra Translation",
+                    metricName: "Translation Accuracy",
+                    description: "This challenge evaluates the accuracy of Pali to Tibetan sutra translations.",
+                    status: "ongoing",
+                    startDate: "May 1, 2025",
+                    endDate: "Aug 1, 2025",
                     participants: 6,
-                    metricName: 'Sutra Score'
+                    organizer: "Pali Text Society",
+                    image: "https://placehold.co/600x400?text=Pali+Translation",
+                    url: vm.baseUrl + "/web/challenges/challenge-page/4/overview"
                 }
             ];
             
-            // Set up other challenges
+            // Load other challenges data
             vm.otherChallenges = [
                 {
-                    id: 'bo-qa-accuracy',
-                    title: 'Tibetan Question Answering',
-                    description: 'This challenge evaluates the accuracy of question answering in Tibetan.',
-                    status: 'ongoing',
-                    startDate: '2025-01-01',
-                    endDate: '2025-12-31',
+                    id: "bo-qa-accuracy",
+                    title: "Tibetan QA Accuracy",
+                    metricName: "Answer Accuracy",
+                    description: "This challenge evaluates the accuracy of question answering in Tibetan.",
+                    status: "ongoing",
+                    startDate: "May 1, 2025",
+                    endDate: "Aug 1, 2025",
                     participants: 15,
-                    metricName: 'QA Accuracy'
+                    organizer: "OpenPecha Team",
+                    image: "https://placehold.co/600x400?text=Tibetan+English",
+                    url: vm.baseUrl + "/web/challenges/challenge-page/1/overview"
                 },
                 {
-                    id: 'bo-ocr-precision',
-                    title: 'Tibetan OCR (Precision)',
-                    description: 'This challenge evaluates the precision of Tibetan OCR systems.',
-                    status: 'ongoing',
-                    startDate: '2025-01-01',
-                    endDate: '2025-12-31',
+                    id: "bo-ocr-precision",
+                    title: "Tibetan OCR Precision",
+                    metricName: "Character Precision",
+                    description: "This challenge evaluates the precision of Tibetan OCR systems.",
+                    status: "ongoing",
+                    startDate: "May 1, 2025",
+                    endDate: "Aug 1, 2025",
                     participants: 7,
-                    metricName: 'OCR Precision'
+                    organizer: "Dharma AI",
+                    image: "https://placehold.co/600x400?text=Buddhist+QA",
+                    url: vm.baseUrl + "/web/challenges/challenge-page/2/overview"
                 },
                 {
-                    id: 'bo-ocr-recall',
-                    title: 'Tibetan OCR (Recall)',
-                    description: 'This challenge evaluates the recall of Tibetan OCR systems.',
-                    status: 'ongoing',
-                    startDate: '2025-01-01',
-                    endDate: '2025-12-31',
+                    id: "bo-ocr-recall",
+                    title: "Tibetan OCR Recall",
+                    metricName: "Character Recall",
+                    description: "This challenge evaluates the recall of Tibetan OCR systems.",
+                    status: "ongoing",
+                    startDate: "May 1, 2025",
+                    endDate: "Aug 1, 2025",
                     participants: 7,
-                    metricName: 'OCR Recall'
+                    organizer: "Buddhist Digital Resource Center",
+                    image: "https://placehold.co/600x400?text=Tibetan+OCR",
+                    url: vm.baseUrl + "/web/challenges/challenge-page/3/overview"
                 },
                 {
-                    id: 'bo-text-classification',
-                    title: 'Tibetan Text Classification',
-                    description: 'This challenge evaluates the accuracy of Tibetan text classification systems.',
-                    status: 'ongoing',
-                    startDate: '2025-01-01',
-                    endDate: '2025-12-31',
+                    id: "bo-text-classification",
+                    title: "Buddhist Text Classification",
+                    metricName: "Classification Accuracy",
+                    description: "This challenge evaluates the accuracy of Tibetan text classification systems.",
+                    status: "ongoing",
+                    startDate: "May 1, 2025",
+                    endDate: "Aug 1, 2025",
                     participants: 9,
-                    metricName: 'Classification Accuracy'
+                    organizer: "Pali Text Society",
+                    image: "https://placehold.co/600x400?text=Pali+Translation",
+                    url: vm.baseUrl + "/web/challenges/challenge-page/4/overview"
                 }
             ];
             
-            // Fetch challenges from API
+            // Test API connection directly
+            console.log('Testing API connection...');
+            $http({
+                method: 'GET',
+                url: '/api/challenges/challenge/present/approved/public',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            }).then(function(response) {
+                console.log('Direct API test successful:', response);
+            }).catch(function(error) {
+                console.error('Direct API test failed:', error);
+                console.log('Will use fallback data for challenges');
+            });
+            
+            // Load challenges data from API
             vm.fetchChallenges();
             
-            // Initialize charts after a delay to ensure DOM is ready
-            $timeout(function() {
+            // Initialize charts after DOM is ready
+            setTimeout(function() {
                 vm.initializeCharts();
-            }, 1000);
+            }, 500);
         };
         
-        // Format date for display
+        // Format date function
         vm.formatDate = function(dateString) {
-            return moment(dateString).format('MMMM D, YYYY');
+            if (!dateString) return '';
+            return moment(dateString).format('MMM D, YYYY');
         };
         
         // Fetch challenges from API
         vm.fetchChallenges = function() {
-            console.log('Fetching challenges from API:', vm.apiUrl + 'challenges/challenge/present/approved/public');
+            console.log('Fetching challenges from API:', '/api/challenges/challenge/present/approved/public');
             
             // Fallback data in case API fails
             var fallbackChallenges = [
                 {
-                    id: '21',
-                    title: 'Tibetan Translation Challenge',
-                    description: 'Evaluate the quality of machine translation from Tibetan to English.',
-                    start_date: '2025-01-01T00:00:00Z',
-                    end_date: '2025-12-31T23:59:59Z',
-                    participant_count: 15,
-                    published: true,
-                    approved_by_admin: true,
-                    is_active: true,
-                    status: 'ongoing'
+                    id: 1,
+                    title: "Tibetan-English Translation Challenge",
+                    description: "Translate Tibetan Buddhist texts to English with high accuracy.",
+                    image: "https://placehold.co/600x400?text=Tibetan+English",
+                    organizer: "OpenPecha Team",
+                    startDate: "May 1, 2025",
+                    endDate: "Aug 1, 2025",
+                    status: "ongoing",
+                    url: vm.baseUrl + "/web/challenges/challenge-page/1/overview"
                 },
                 {
-                    id: '22',
-                    title: 'Buddhist Text Classification',
-                    description: 'Classify Buddhist texts by tradition and time period.',
-                    start_date: '2025-01-01T00:00:00Z',
-                    end_date: '2025-12-31T23:59:59Z',
-                    participant_count: 12,
-                    published: true,
-                    approved_by_admin: true,
-                    is_active: true,
-                    status: 'ongoing'
+                    id: 2,
+                    title: "Buddhist QA Challenge",
+                    description: "Answer questions about Buddhist philosophy and texts.",
+                    image: "https://placehold.co/600x400?text=Buddhist+QA",
+                    organizer: "Dharma AI",
+                    startDate: "May 15, 2025",
+                    endDate: "Jul 15, 2025",
+                    status: "ongoing",
+                    url: vm.baseUrl + "/web/challenges/challenge-page/2/overview"
+                },
+                {
+                    id: 3,
+                    title: "Tibetan OCR Challenge",
+                    description: "Recognize and digitize Tibetan manuscripts.",
+                    image: "https://placehold.co/600x400?text=Tibetan+OCR",
+                    organizer: "Buddhist Digital Resource Center",
+                    startDate: "Jun 1, 2025",
+                    endDate: "Sep 1, 2025",
+                    status: "upcoming",
+                    url: vm.baseUrl + "/web/challenges/challenge-page/3/overview"
+                },
+                {
+                    id: 4,
+                    title: "Pali Translation Challenge",
+                    description: "Translate Pali texts to modern languages.",
+                    image: "https://placehold.co/600x400?text=Pali+Translation",
+                    organizer: "Pali Text Society",
+                    startDate: "Jan 1, 2025",
+                    endDate: "Apr 1, 2025",
+                    status: "past",
+                    url: vm.baseUrl + "/web/challenges/challenge-page/4/overview"
                 }
             ];
             
-            // Set up request parameters
             var parameters = {};
-            parameters.url = vm.apiUrl + 'challenges/challenge/present/approved/public';
+            parameters.url = '/challenges/challenge/present/approved/public';
             parameters.method = 'GET';
-            parameters.data = {};
+            // Add headers to handle CORS
+            parameters.headers = {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            };
             parameters.callback = {
                 onSuccess: function(response) {
-                    console.log('Challenges received:', response);
+                    console.log('API response received:', response);
                     
-                    if (response.data && response.data.results) {
-                        vm.challenges = response.data.results.map(function(item) {
-                            // Determine challenge status based on dates
-                            var now = new Date();
-                            var startDate = new Date(item.start_date);
-                            var endDate = new Date(item.end_date);
-                            var status = 'upcoming';
-                            
-                            if (now > endDate) {
-                                status = 'past';
-                            } else if (now >= startDate && now <= endDate) {
-                                status = 'ongoing';
-                            }
-                            
-                            // Return formatted challenge object
-                            return {
-                                id: item.id,
-                                title: item.title,
-                                description: item.description,
-                                startDate: item.start_date,
-                                endDate: item.end_date,
-                                participants: item.participant_count || 0,
-                                status: status,
-                                isPublished: item.published,
-                                isApproved: item.approved_by_admin,
-                                isActive: item.is_active
-                            };
-                        });
+                    // Check if we have a valid response with data
+                    if (response && response.data) {
+                        console.log('Response data:', response.data);
                     } else {
-                        console.warn('No challenges found in API response, using fallback data');
-                        vm.challenges = fallbackChallenges.map(function(item) {
-                            return {
-                                id: item.id,
-                                title: item.title,
-                                description: item.description,
-                                startDate: item.start_date,
-                                endDate: item.end_date,
-                                participants: item.participant_count || 0,
-                                status: item.status,
-                                isPublished: item.published,
-                                isApproved: item.approved_by_admin,
-                                isActive: item.is_active
-                            };
-                        });
+                        console.error('Invalid response format - no data property');
+                    }
+                    
+                    if (response.data && response.data.results && response.data.results.length > 0) {
+                        console.log('Challenge results:', response.data.results);
+                        try {
+                            vm.challenges = response.data.results.map(function(item) {
+                                // Log each item for debugging
+                                console.log('Processing challenge item:', item);
+                                
+                                // Determine challenge status based on dates
+                                var now = moment();
+                                var startDate = moment(item.start_date);
+                                var endDate = moment(item.end_date);
+                                
+                                var status = 'upcoming';
+                                if (now.isAfter(startDate) && now.isBefore(endDate)) {
+                                    status = 'ongoing';
+                                } else if (now.isAfter(endDate)) {
+                                    status = 'past';
+                                }
+                                
+                                // Create the challenge object with safe property access
+                                return {
+                                    id: item.id || 'unknown-id',
+                                    title: item.title || 'Untitled Challenge',
+                                    description: item.short_description || '',
+                                    image: item.image || 'https://placehold.co/600x400?text=Challenge',
+                                    organizer: item.creator && item.creator.team_name ? item.creator.team_name : 'Unknown',
+                                    startDate: vm.formatDate(item.start_date),
+                                    endDate: vm.formatDate(item.end_date),
+                                    status: status,
+                                    url: vm.baseUrl + '/web/challenges/challenge-page/' + (item.id || 0) + '/overview'
+                                };
+                            });
+                            
+                            console.log('Successfully mapped challenges:', vm.challenges);
+                        } catch (mappingError) {
+                            console.error('Error mapping challenge data:', mappingError);
+                            vm.challenges = fallbackChallenges;
+                        }
+                    } else {
+                        console.warn('No challenges found in API response or invalid format. Using fallback data.');
+                        vm.challenges = fallbackChallenges;
                     }
                     
                     // Count challenges by status
@@ -228,6 +296,9 @@
                         return challenge.status === 'past';
                     }).length;
                     
+                    console.log('Processed challenges:', vm.challenges);
+                    console.log('Counts - Ongoing:', vm.ongoingCount, 'Upcoming:', vm.upcomingCount, 'Past:', vm.pastCount);
+                    
                     // Set initial filtered challenges
                     vm.setActiveTab(vm.activeTab);
                     
@@ -242,22 +313,8 @@
                 },
                 onError: function(error) {
                     console.error('Error fetching challenges:', error);
-                    
-                    // Use fallback data on error
-                    vm.challenges = fallbackChallenges.map(function(item) {
-                        return {
-                            id: item.id,
-                            title: item.title,
-                            description: item.description,
-                            startDate: item.start_date,
-                            endDate: item.end_date,
-                            participants: item.participant_count || 0,
-                            status: item.status,
-                            isPublished: item.published,
-                            isApproved: item.approved_by_admin,
-                            isActive: item.is_active
-                        };
-                    });
+                    // Fallback to static data if API fails
+                    vm.challenges = fallbackChallenges;
                     
                     // Count challenges by status
                     vm.ongoingCount = vm.challenges.filter(function(challenge) {
@@ -277,14 +334,35 @@
                 }
             };
             
-            // Send request to API
-            utilities.sendRequest(parameters);
+            // Try making the API request
+            try {
+                utilities.sendRequest(parameters);
+            } catch (e) {
+                console.error('Exception while sending request:', e);
+                // Use fallback data if request fails
+                vm.challenges = fallbackChallenges;
+                
+                // Count challenges by status
+                vm.ongoingCount = vm.challenges.filter(function(challenge) {
+                    return challenge.status === 'ongoing';
+                }).length;
+                
+                vm.upcomingCount = vm.challenges.filter(function(challenge) {
+                    return challenge.status === 'upcoming';
+                }).length;
+                
+                vm.pastCount = vm.challenges.filter(function(challenge) {
+                    return challenge.status === 'past';
+                }).length;
+                
+                // Set initial filtered challenges
+                vm.setActiveTab(vm.activeTab);
+            }
         };
         
         // Set active tab and filter challenges
         vm.setActiveTab = function(tab) {
             vm.activeTab = tab;
-            
             vm.filteredChallenges = vm.challenges.filter(function(challenge) {
                 return challenge.status === tab;
             });
@@ -292,10 +370,16 @@
         
         // Scroll section horizontally
         vm.scrollSection = function(section, direction) {
-            var element = document.querySelector('.horizontal-scroll');
+            var element;
+            if (section === 'translation') {
+                element = document.querySelector('.horizontal-scroll');
+            } else {
+                element = document.querySelectorAll('.horizontal-scroll')[1];
+            }
+            
             if (!element) return;
             
-            var scrollAmount = direction === 'left' ? -300 : 300;
+            var scrollAmount = direction === 'right' ? 360 : -360;
             element.scrollBy({ left: scrollAmount, behavior: 'smooth' });
         };
         
@@ -312,7 +396,7 @@
             
             // Step 1: Get challenge phases
             var phaseParams = {};
-            phaseParams.url = vm.apiUrl + 'challenges/challenge/' + challengeId + '/challenge_phase';
+            phaseParams.url = '/challenges/challenge/' + challengeId + '/challenge_phase';
             phaseParams.method = 'GET';
             phaseParams.callback = {
                 onSuccess: function(phaseResponse) {
@@ -325,7 +409,7 @@
                         
                         // Step 2: Get phase splits
                         var splitParams = {};
-                        splitParams.url = vm.apiUrl + 'challenges/challenge/' + challengeId + '/challenge_phase_split';
+                        splitParams.url = '/challenges/challenge/' + challengeId + '/challenge_phase_split';
                         splitParams.method = 'GET';
                         splitParams.callback = {
                             onSuccess: function(splitResponse) {
@@ -343,7 +427,7 @@
                                         
                                         // Step 3: Get leaderboard data
                                         var leaderboardParams = {};
-                                        leaderboardParams.url = vm.apiUrl + 'jobs/challenge_phase_split/' + splitId + '/leaderboard/';
+                                        leaderboardParams.url = '/jobs/challenge_phase_split/' + splitId + '/leaderboard/';
                                         leaderboardParams.method = 'GET';
                                         leaderboardParams.callback = {
                                             onSuccess: function(leaderboardResponse) {
@@ -486,34 +570,45 @@
         
         // Initialize charts for each challenge
         vm.initializeCharts = function() {
-            console.log('Initializing charts for challenges');
+            // Sample data for charts
+            var createChartData = function() {
+                return {
+                    labels: ['GPT-4', 'Claude 3', 'Llama 3', 'Gemini', 'Mistral'],
+                    datasets: [{
+                        label: 'Performance',
+                        data: [
+                            Math.random() * 30 + 70, // Random score between 70-100
+                            Math.random() * 30 + 70,
+                            Math.random() * 30 + 70,
+                            Math.random() * 30 + 70,
+                            Math.random() * 30 + 70
+                        ],
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                };
+            };
             
-            // Create sample charts for translation challenges
+            // Create charts for translation challenges
             vm.translationChallenges.forEach(function(challenge) {
-                // Create a sample chart instead of trying to fetch real data
                 var ctx = document.getElementById(challenge.id + '-chart');
                 if (ctx) {
-                    // Sample data for charts
-                    var chartData = {
-                        labels: ['GPT-4', 'Claude 3', 'Llama 3', 'Gemini', 'Mistral'],
-                        datasets: [{
-                            label: challenge.metricName,
-                            data: [
-                                Math.random() * 30 + 70, // Random score between 70-100
-                                Math.random() * 30 + 70,
-                                Math.random() * 30 + 70,
-                                Math.random() * 30 + 70,
-                                Math.random() * 30 + 70
-                            ],
-                            backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                            borderColor: 'rgba(54, 162, 235, 1)',
-                            borderWidth: 1
-                        }]
-                    };
-                    
                     new Chart(ctx, {
                         type: 'bar',
-                        data: chartData,
+                        data: createChartData(challenge.id),
                         options: {
                             scales: {
                                 y: {
@@ -533,32 +628,13 @@
                 }
             });
             
-            // Create sample charts for other challenges
+            // Create charts for other challenges
             vm.otherChallenges.forEach(function(challenge) {
-                // Create a sample chart instead of trying to fetch real data
                 var ctx = document.getElementById(challenge.id + '-chart');
                 if (ctx) {
-                    // Sample data for charts
-                    var chartData = {
-                        labels: ['GPT-4', 'Claude 3', 'Llama 3', 'Gemini', 'Mistral'],
-                        datasets: [{
-                            label: challenge.metricName,
-                            data: [
-                                Math.random() * 30 + 70, // Random score between 70-100
-                                Math.random() * 30 + 70,
-                                Math.random() * 30 + 70,
-                                Math.random() * 30 + 70,
-                                Math.random() * 30 + 70
-                            ],
-                            backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                            borderColor: 'rgba(54, 162, 235, 1)',
-                            borderWidth: 1
-                        }]
-                    };
-                    
                     new Chart(ctx, {
                         type: 'bar',
-                        data: chartData,
+                        data: createChartData(challenge.id),
                         options: {
                             scales: {
                                 y: {
