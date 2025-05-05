@@ -575,89 +575,7 @@
         
         // Initialize charts for each challenge
         vm.initializeCharts = function() {
-            // Sample data for charts
-            var createChartData = function() {
-                return {
-                    labels: ['GPT-4', 'Claude 3', 'Llama 3', 'Gemini', 'Mistral'],
-                    datasets: [{
-                        label: 'Performance',
-                        data: [
-                            Math.random() * 30 + 70, // Random score between 70-100
-                            Math.random() * 30 + 70,
-                            Math.random() * 30 + 70,
-                            Math.random() * 30 + 70,
-                            Math.random() * 30 + 70
-                        ],
-                        backgroundColor: [
-                            'rgba(255, 99, 132, 0.2)',
-                            'rgba(54, 162, 235, 0.2)',
-                            'rgba(255, 206, 86, 0.2)',
-                            'rgba(75, 192, 192, 0.2)',
-                            'rgba(153, 102, 255, 0.2)'
-                        ],
-                        borderColor: [
-                            'rgba(255, 99, 132, 1)',
-                            'rgba(54, 162, 235, 1)',
-                            'rgba(255, 206, 86, 1)',
-                            'rgba(75, 192, 192, 1)',
-                            'rgba(153, 102, 255, 1)'
-                        ],
-                        borderWidth: 1
-                    }]
-                };
-            };
-            
-            // Create charts for translation challenges
-            vm.translationChallenges.forEach(function(challenge) {
-                var ctx = document.getElementById(challenge.id + '-chart');
-                if (ctx) {
-                    new Chart(ctx, {
-                        type: 'bar',
-                        data: createChartData(challenge.id),
-                        options: {
-                            scales: {
-                                y: {
-                                    beginAtZero: false,
-                                    min: 60,
-                                    max: 100
-                                }
-                            },
-                            plugins: {
-                                title: {
-                                    display: true,
-                                    text: challenge.metricName
-                                }
-                            }
-                        }
-                    });
-                }
-            });
-            
-            // Create charts for other challenges
-            vm.otherChallenges.forEach(function(challenge) {
-                var ctx = document.getElementById(challenge.id + '-chart');
-                if (ctx) {
-                    new Chart(ctx, {
-                        type: 'bar',
-                        data: createChartData(challenge.id),
-                        options: {
-                            scales: {
-                                y: {
-                                    beginAtZero: false,
-                                    min: 60,
-                                    max: 100
-                                }
-                            },
-                            plugins: {
-                                title: {
-                                    display: true,
-                                    text: challenge.metricName
-                                }
-                            }
-                        }
-                    });
-                }
-            });
+            console.log('Initializing charts for challenges');
             
             // Only fetch real leaderboard data for challenges from the API
             vm.challenges.forEach(function(challenge) {
@@ -669,6 +587,45 @@
                     if (chartElement) {
                         vm.plotLeaderboardData(challenge.id, 'challenge-' + challenge.id + '-chart');
                     }
+                }
+            });
+            
+            // For translation challenges, we'll use the leaderboard data if available
+            // Otherwise, we'll show a message that no data is available
+            vm.translationChallenges.forEach(function(challenge) {
+                var ctx = document.getElementById(challenge.id + '-chart');
+                if (ctx) {
+                    // Create a placeholder chart with "No data available" message
+                    new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: ['No real-time data available'],
+                            datasets: [{
+                                label: 'Score',
+                                data: [0],
+                                backgroundColor: 'rgba(200, 200, 200, 0.2)',
+                                borderColor: 'rgba(200, 200, 200, 1)',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            scales: {
+                                y: {
+                                    display: false
+                                }
+                            },
+                            plugins: {
+                                legend: {
+                                    display: false
+                                },
+                                title: {
+                                    display: true,
+                                    text: challenge.metricName + ' (Demo)'
+                                }
+                            }
+                        }
+                    });
                 }
             });
         };

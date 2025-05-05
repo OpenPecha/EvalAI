@@ -15,7 +15,6 @@
                     <!-- Horizontal scrollable section for translation tasks -->
                     <div class="horizontal-scroll">
                         <div class="row">
-                            <!-- Tibetan-English Translation Factuality -->
                             <div class="col s12 m6 l3" ng-repeat="challenge in buddhism.translationChallenges">
                                 <div class="card">
                                     <div class="card-content">
@@ -34,41 +33,6 @@
                                 <i class="material-icons">chevron_left</i>
                             </button>
                             <button class="btn waves-effect waves-light" ng-click="buddhism.scrollSection('translation', 'right')">
-                                <i class="material-icons">chevron_right</i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Other Tasks Section -->
-        <div class="row">
-            <div class="col s12">
-                <div class="card-panel">
-                    <h5 class="text-center">Other Tasks</h5>
-                    
-                    <!-- Horizontal scrollable section for other tasks -->
-                    <div class="horizontal-scroll">
-                        <div class="row">
-                            <div class="col s12 m6 l3" ng-repeat="challenge in buddhism.otherChallenges">
-                                <div class="card">
-                                    <div class="card-content">
-                                        <span class="card-title">{{challenge.title}}</span>
-                                        <canvas id="{{challenge.id}}-chart" height="200"></canvas>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Navigation buttons -->
-                    <div class="row">
-                        <div class="col s12 center-align">
-                            <button class="btn waves-effect waves-light" ng-click="buddhism.scrollSection('otherTasks', 'left')">
-                                <i class="material-icons">chevron_left</i>
-                            </button>
-                            <button class="btn waves-effect waves-light" ng-click="buddhism.scrollSection('otherTasks', 'right')">
                                 <i class="material-icons">chevron_right</i>
                             </button>
                         </div>
@@ -123,6 +87,15 @@
                                         <span class="start-date"><strong>Start:</strong> {{challenge.startDate}}</span><br>
                                         <span class="end-date"><strong>End:</strong> {{challenge.endDate}}</span>
                                     </p>
+                                    <!-- Add leaderboard chart for each challenge from API -->
+                                    <div ng-if="buddhism.leaderboards[challenge.id]">
+                                        <h6 class="center-align">Leaderboard</h6>
+                                        <canvas id="challenge-{{challenge.id}}-chart" height="200"></canvas>
+                                    </div>
+                                    <!-- Show message if no leaderboard data available -->
+                                    <div ng-if="!buddhism.leaderboards[challenge.id]" class="center-align">
+                                        <p><em>No leaderboard data available</em></p>
+                                    </div>
                                 </div>
                                 <div class="card-action">
                                     <a ng-href="{{challenge.url}}" target="_blank">View Details</a>
