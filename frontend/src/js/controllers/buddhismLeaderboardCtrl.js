@@ -409,7 +409,7 @@
                         
                         // Step 2: Get phase splits
                         var splitParams = {};
-                        splitParams.url = 'challenges/challenge/' + challengeId + '/challenge_phase_split';
+                        splitParams.url = 'challenges/' + challengeId + '/challenge_phase_split';
                         splitParams.method = 'GET';
                         splitParams.callback = {
                             onSuccess: function(splitResponse) {
