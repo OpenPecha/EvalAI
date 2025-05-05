@@ -459,6 +459,7 @@
                                                             };
                                                         })
                                                     };
+                                                    console.log('Processed leaderboard data:', processedData);
                                                     
                                                     // Store the processed leaderboard data
                                                     vm.leaderboards[challengeId] = processedData;
