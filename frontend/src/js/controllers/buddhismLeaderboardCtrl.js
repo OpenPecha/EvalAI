@@ -26,120 +26,8 @@
         
         // Initialize the controller
         vm.initialize = function() {
-            // Load translation challenges data
-            // vm.translationChallenges = [
-            //     {
-            //         id: "bo-en-factuality",
-            //         title: "Tibetan-English Translation Factuality",
-            //         metricName: "Factual Accuracy",
-            //         description: "This challenge evaluates the factual accuracy of Tibetan to English translations.",
-            //         status: "ongoing",
-            //         startDate: "May 1, 2025",
-            //         endDate: "Aug 1, 2025",
-            //         participants: 12,
-            //         organizer: "OpenPecha Team",
-            //         image: "https://placehold.co/600x400?text=Tibetan+English",
-            //         url: vm.baseUrl + "/web/challenges/challenge-page/1/overview"
-            //     },
-            //     {
-            //         id: "bo-en-literal",
-            //         title: "Tibetan-English Literal Translation",
-            //         metricName: "Literal Score",
-            //         description: "This challenge evaluates the literal accuracy of Tibetan to English translations.",
-            //         status: "ongoing",
-            //         startDate: "May 1, 2025",
-            //         endDate: "Aug 1, 2025",
-            //         participants: 10,
-            //         organizer: "Dharma AI",
-            //         image: "https://placehold.co/600x400?text=Buddhist+QA",
-            //         url: vm.baseUrl + "/web/challenges/challenge-page/2/overview"
-            //     },
-            //     {
-            //         id: "bo-zh-readable",
-            //         title: "Tibetan-Chinese Readable Translation",
-            //         metricName: "Readability Score",
-            //         description: "This challenge evaluates the readability of Tibetan to Chinese translations.",
-            //         status: "ongoing",
-            //         startDate: "May 1, 2025",
-            //         endDate: "Aug 1, 2025",
-            //         participants: 8,
-            //         organizer: "Buddhist Digital Resource Center",
-            //         image: "https://placehold.co/600x400?text=Tibetan+OCR",
-            //         url: vm.baseUrl + "/web/challenges/challenge-page/3/overview"
-            //     },
-            //     {
-            //         id: "pi-bo-sutra",
-            //         title: "Pali-Tibetan Sutra Translation",
-            //         metricName: "Translation Accuracy",
-            //         description: "This challenge evaluates the accuracy of Pali to Tibetan sutra translations.",
-            //         status: "ongoing",
-            //         startDate: "May 1, 2025",
-            //         endDate: "Aug 1, 2025",
-            //         participants: 6,
-            //         organizer: "Pali Text Society",
-            //         image: "https://placehold.co/600x400?text=Pali+Translation",
-            //         url: vm.baseUrl + "/web/challenges/challenge-page/4/overview"
-            //     }
-            // ];
-            
-            // Generate synthetic leaderboard data for translation challenges
-            vm.generateTranslationLeaderboardData();
-            
-            // Load other challenges data
-            vm.otherChallenges = [
-                {
-                    id: "bo-qa-accuracy",
-                    title: "Tibetan QA Accuracy",
-                    metricName: "Answer Accuracy",
-                    description: "This challenge evaluates the accuracy of question answering in Tibetan.",
-                    status: "ongoing",
-                    startDate: "May 1, 2025",
-                    endDate: "Aug 1, 2025",
-                    participants: 15,
-                    organizer: "OpenPecha Team",
-                    image: "https://placehold.co/600x400?text=Tibetan+English",
-                    url: vm.baseUrl + "/web/challenges/challenge-page/1/overview"
-                },
-                {
-                    id: "bo-ocr-precision",
-                    title: "Tibetan OCR Precision",
-                    metricName: "Character Precision",
-                    description: "This challenge evaluates the precision of Tibetan OCR systems.",
-                    status: "ongoing",
-                    startDate: "May 1, 2025",
-                    endDate: "Aug 1, 2025",
-                    participants: 7,
-                    organizer: "Dharma AI",
-                    image: "https://placehold.co/600x400?text=Buddhist+QA",
-                    url: vm.baseUrl + "/web/challenges/challenge-page/2/overview"
-                },
-                {
-                    id: "bo-ocr-recall",
-                    title: "Tibetan OCR Recall",
-                    metricName: "Character Recall",
-                    description: "This challenge evaluates the recall of Tibetan OCR systems.",
-                    status: "ongoing",
-                    startDate: "May 1, 2025",
-                    endDate: "Aug 1, 2025",
-                    participants: 7,
-                    organizer: "Buddhist Digital Resource Center",
-                    image: "https://placehold.co/600x400?text=Tibetan+OCR",
-                    url: vm.baseUrl + "/web/challenges/challenge-page/3/overview"
-                },
-                {
-                    id: "bo-text-classification",
-                    title: "Buddhist Text Classification",
-                    metricName: "Classification Accuracy",
-                    description: "This challenge evaluates the accuracy of Tibetan text classification systems.",
-                    status: "ongoing",
-                    startDate: "May 1, 2025",
-                    endDate: "Aug 1, 2025",
-                    participants: 9,
-                    organizer: "Pali Text Society",
-                    image: "https://placehold.co/600x400?text=Pali+Translation",
-                    url: vm.baseUrl + "/web/challenges/challenge-page/4/overview"
-                }
-            ];
+            // Initialize empty translation challenges array
+            vm.translationChallenges = [];
             
             // Test API connection directly
             console.log('Testing API connection...');
@@ -160,10 +48,13 @@
             // Load challenges data from API
             vm.fetchChallenges();
             
+            // Load sample leaderboard data for demonstration
+            vm.loadSampleLeaderboardData();
+            
             // Initialize charts after DOM is ready
             setTimeout(function() {
                 vm.initializeCharts();
-            }, 500);
+            }, 1000); // Increased timeout to ensure DOM is ready
         };
         
         // Format date function
@@ -692,74 +583,82 @@
             console.log('Chart created successfully');
         };
         
-        // Generate synthetic leaderboard data for translation challenges
-        vm.generateTranslationLeaderboardData = function() {
-            // Models to use in the leaderboard
-            var models = [
-                { name: "GPT-4", team: "OpenAI" },
-                { name: "Claude 3", team: "Anthropic" },
-                { name: "Llama 3", team: "Meta AI" },
-                { name: "Gemini", team: "Google" },
-                { name: "Mistral", team: "Mistral AI" }
+        // Load sample leaderboard data for demonstration
+        vm.loadSampleLeaderboardData = function() {
+            // Sample leaderboard data in the exact format from the API
+            var sampleLeaderboardData = [
+                {
+                    "challengeId": 21,
+                    "challengeTitle": "STT-Challenge",
+                    "entries": [
+                        {
+                            "methodName": "Ganga_Model",
+                            "teamName": "OpenPecha_STT_team",
+                            "result": [
+                                0.0455,
+                                0.042
+                            ],
+                            "submittedAt": "2025-04-11T06:14:02.188502Z",
+                            "schemaLabels": [
+                                "WER",
+                                "CER"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "challengeId": 22,
+                    "challengeTitle": "Machine Translation Challenge",
+                    "entries": [
+                        {
+                            "methodName": "claude-3-7-sonnet-latest",
+                            "teamName": "OpenPecha_MT_team",
+                            "result": [
+                                6.38
+                            ],
+                            "submittedAt": "2025-04-30T09:19:46.475320Z",
+                            "schemaLabels": [
+                                "LLMScore"
+                            ]
+                        },
+                        {
+                            "methodName": "gemini-1.5-pro",
+                            "teamName": "OpenPecha_MT_team",
+                            "result": [
+                                5.39
+                            ],
+                            "submittedAt": "2025-04-30T11:50:42.828254Z",
+                            "schemaLabels": [
+                                "LLMScore"
+                            ]
+                        },
+                        {
+                            "methodName": "ChatGPT 4",
+                            "teamName": "OpenPecha_MT_team",
+                            "result": [
+                                3.02
+                            ],
+                            "submittedAt": "2025-05-01T04:25:35.397179Z",
+                            "schemaLabels": [
+                                "LLMScore"
+                            ]
+                        }
+                    ]
+                }
             ];
             
-            // Generate data for each translation challenge
-            vm.translationChallenges.forEach(function(challenge) {
-                // Create entries for this challenge
-                var entries = [];
+            // Store the leaderboard data in the vm.leaderboards object
+            sampleLeaderboardData.forEach(function(leaderboard) {
+                vm.leaderboards[leaderboard.challengeId] = leaderboard;
                 
-                // Generate 5 entries with different models
-                models.forEach(function(model, index) {
-                    // Determine if this entry should have multiple metrics
-                    var hasMultipleMetrics = challenge.id === "bo-en-factuality" || challenge.id === "bo-zh-readable";
-                    
-                    // Create entry with appropriate metrics
-                    var entry = {
-                        methodName: model.name,
-                        teamName: model.team,
-                        submittedAt: new Date(2025, 4, 15 - index).toISOString(),
-                        score: (Math.random() * 15 + 80).toFixed(2) // Random score between 80-95
-                    };
-                    
-                    // Add different result formats based on challenge type
-                    if (hasMultipleMetrics) {
-                        // Multiple metrics
-                        if (challenge.id === "bo-en-factuality") {
-                            entry.result = [
-                                (Math.random() * 15 + 80).toFixed(2), // Factual accuracy score
-                                (Math.random() * 20 + 75).toFixed(2)  // Fluency score
-                            ];
-                            entry.schemaLabels = ["Factual Accuracy", "Fluency"];
-                        } else {
-                            entry.result = [
-                                (Math.random() * 15 + 80).toFixed(2), // Readability score
-                                (Math.random() * 15 + 80).toFixed(2), // Accuracy score
-                                (Math.random() * 15 + 80).toFixed(2)  // Cultural appropriateness score
-                            ];
-                            entry.schemaLabels = ["Readability", "Accuracy", "Cultural Appropriateness"];
-                        }
-                    } else {
-                        // Single metric
-                        entry.result = [(Math.random() * 15 + 80).toFixed(2)];
-                        entry.schemaLabels = [challenge.metricName];
-                    }
-                    
-                    entries.push(entry);
+                // Add to translation challenges array for display in the UI
+                vm.translationChallenges.push({
+                    id: leaderboard.challengeId,
+                    title: leaderboard.challengeTitle,
+                    metricName: leaderboard.entries[0].schemaLabels.join(", ")
                 });
                 
-                // Sort entries by the first result metric (descending)
-                entries.sort(function(a, b) {
-                    return parseFloat(b.result[0]) - parseFloat(a.result[0]);
-                });
-                
-                // Store the processed leaderboard data
-                vm.leaderboards[challenge.id] = {
-                    challengeId: challenge.id,
-                    challengeTitle: challenge.title,
-                    entries: entries
-                };
-                
-                console.log('Generated leaderboard data for:', challenge.title, vm.leaderboards[challenge.id]);
+                console.log('Added leaderboard data for challenge:', leaderboard.challengeTitle);
             });
         };
         
@@ -767,7 +666,7 @@
         vm.initializeCharts = function() {
             console.log('Initializing charts for challenges');
             
-            // Only fetch real leaderboard data for challenges from the API
+            // For API challenges
             vm.challenges.forEach(function(challenge) {
                 // Only fetch data for challenges with numeric IDs
                 if (!isNaN(parseInt(challenge.id))) {
@@ -780,7 +679,7 @@
                 }
             });
             
-            // For translation challenges, use the synthetic leaderboard data
+            // For translation challenges (using sample data)
             vm.translationChallenges.forEach(function(challenge) {
                 var ctx = document.getElementById(challenge.id + '-chart');
                 if (ctx) {
