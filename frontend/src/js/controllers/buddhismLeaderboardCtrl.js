@@ -51,10 +51,68 @@
             // Load sample leaderboard data for demonstration
             vm.loadSampleLeaderboardData();
             
-            // Initialize charts after DOM is ready
+            // Initialize charts after DOM is ready with retry mechanism
+            vm.chartsInitialized = false;
+            vm.chartInitAttempts = 0;
+            vm.maxChartInitAttempts = 5;
+            
+            // First attempt after a delay
             setTimeout(function() {
+                vm.initializeChartsWithRetry();
+            }, 1500); // Increased timeout to ensure DOM is ready
+        };
+        
+        // Initialize charts with retry mechanism
+        vm.initializeChartsWithRetry = function() {
+            console.log('Attempting to initialize charts, attempt #' + (vm.chartInitAttempts + 1));
+            
+            // Check if charts are already initialized
+            if (vm.chartsInitialized) {
+                console.log('Charts already initialized, skipping');
+                return;
+            }
+            
+            // Increment attempt counter
+            vm.chartInitAttempts++;
+            
+            // Check if DOM elements for charts exist
+            var canProceed = true;
+            
+            // Check translation challenge chart elements
+            if (vm.translationChallenges.length > 0) {
+                var sampleChartElement = document.getElementById('challenge-' + vm.translationChallenges[0].id + '-chart');
+                if (!sampleChartElement) {
+                    console.warn('Translation challenge chart elements not ready yet');
+                    canProceed = false;
+                }
+            }
+            
+            // Check API challenge chart elements if any exist
+            if (vm.challenges.length > 0) {
+                var apiChartElement = document.getElementById('challenge-' + vm.challenges[0].id + '-chart');
+                if (!apiChartElement && !isNaN(parseInt(vm.challenges[0].id))) {
+                    console.warn('API challenge chart elements not ready yet');
+                    canProceed = false;
+                }
+            }
+            
+            if (canProceed) {
+                // DOM elements are ready, initialize charts
+                console.log('DOM elements for charts are ready, initializing charts');
                 vm.initializeCharts();
-            }, 1000); // Increased timeout to ensure DOM is ready
+                vm.chartsInitialized = true;
+            } else if (vm.chartInitAttempts < vm.maxChartInitAttempts) {
+                // Retry after a delay
+                console.log('Retrying chart initialization in 500ms');
+                setTimeout(function() {
+                    vm.initializeChartsWithRetry();
+                }, 500);
+            } else {
+                // Max attempts reached, try one last time anyway
+                console.warn('Max chart initialization attempts reached, forcing initialization');
+                vm.initializeCharts();
+                vm.chartsInitialized = true;
+            }
         };
         
         // Format date function
