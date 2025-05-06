@@ -10,15 +10,15 @@
         <div class="row">
             <div class="col s12">
                 <div class="card-panel">
-                    <h5 class="text-center">Translation Tasks</h5>
+                    <!-- <h5 class="text-center">Translation Tasks</h5> -->
                     
                     <!-- Horizontal scrollable section for translation tasks -->
                     <div class="horizontal-scroll">
                         <div class="row">
                             <div class="col s12 m6 l3" ng-repeat="challenge in buddhism.translationChallenges">
-                                <div class="card">
-                                    <div class="card-content">
-                                        <span class="card-title">{{challenge.challengeTitle}}</span>
+                                <div class="leaderboard-card">
+                                    <div class="leaderboard-card-content">
+                                        <span class="leaderboard-card-title">{{challenge.challengeTitle}}</span>
                                         <!-- <canvas id="{{challenge.id}}-chart" height="200"></canvas> -->
                                         <!-- Add leaderboard chart for each challenge from API -->
                                         <div ng-if="buddhism.leaderboards[challenge.challengeId]">
