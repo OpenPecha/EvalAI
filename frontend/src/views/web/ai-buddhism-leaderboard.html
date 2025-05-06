@@ -1,127 +1,132 @@
-<section class="ev-sm-container ev-view challenge-container">
-    <div class="ev-md-container ev-card-panel ev-z-depth-5 ev-challenge-view">
-        <div class="row margin-bottom-cancel">
-            <div class="col s12">
-                <h5 class="w-300">AI for Buddhism Leaderboard</h5>
+<section class="app-container">
+    <div class="main-content">
+  
+      <div>
+        <h5 class="page-title">AI for Buddhism Leaderboard</h5>
+      </div>
+  
+      <!-- Leaderboard Section -->
+      <div class="card leaderboard-section">
+        <div id="translation" class="scroll-container">
+          <div
+            ng-repeat="challenge in buddhism.translationChallenges"
+            class="leaderboard-card"
+          >
+            <div class="leaderboard-card__header">
+              <span class="leaderboard-card__title">
+                {{challenge.challengeTitle}}
+              </span>
             </div>
-        </div>
-        
-        <!-- Leaderboard Section -->
-        <div class="row">
-            <div class="col s12">
-                <div class="card-panel">
-                    <!-- <h5 class="text-center">Translation Tasks</h5> -->
-                    
-                    <!-- Horizontal scrollable section for translation tasks -->
-                    <div class="horizontal-scroll">
-                        <div class="row">
-                            <div class="col s12 m6 l3" ng-repeat="challenge in buddhism.translationChallenges">
-                                <div class="leaderboard-card">
-                                    <div class="leaderboard-card-content">
-                                        <span class="leaderboard-card-title">{{challenge.challengeTitle}}</span>
-                                        <!-- <canvas id="{{challenge.id}}-chart" height="200"></canvas> -->
-                                        <!-- Add leaderboard chart for each challenge from API -->
-                                        <div ng-if="buddhism.leaderboards[challenge.challengeId]">
-                                            <!-- <h6 class="center-align">Leaderboard</h6> -->
-                                            <canvas id="challenge-{{challenge.challengeId}}-chart" height="200"></canvas>
-                                        </div>
-                                        <!-- Show message if no leaderboard data available -->
-                                        <div ng-if="!buddhism.leaderboards[challenge.challengeId]" class="center-align">
-                                            <p><em>No leaderboard data available</em></p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Navigation buttons -->
-                    <div class="row">
-                        <div class="col s12 center-align">
-                            <button class="btn waves-effect waves-light" ng-click="buddhism.scrollSection('translation', 'left')">
-                                <i class="material-icons">chevron_left</i>
-                            </button>
-                            <button class="btn waves-effect waves-light" ng-click="buddhism.scrollSection('translation', 'right')">
-                                <i class="material-icons">chevron_right</i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
+            <div class="leaderboard-card__body">
+              <div ng-if="buddhism.leaderboards[challenge.challengeId]">
+                <canvas
+                  id="challenge-{{challenge.challengeId}}-chart"
+                  height="200"
+                ></canvas>
+              </div>
+              <div
+                ng-if="!buddhism.leaderboards[challenge.challengeId]"
+                class="center-align"
+              >
+                <p><em>No leaderboard data available</em></p>
+              </div>
             </div>
+          </div>
         </div>
-        
-        <!-- Challenges Section -->
-        <div class="row">
-            <div class="col s12">
-                <div class="card-panel">
-                    <h5 class="text-center">Challenges</h5>
-                    
-                    <!-- Tab Navigation -->
-                    <div class="row">
-                        <div class="col s12">
-                            <ul class="tabs">
-                                <li class="tab col s4">
-                                    <a ng-class="{'active': buddhism.activeTab === 'ongoing'}" 
-                                       ng-click="buddhism.setActiveTab('ongoing')">
-                                       Ongoing ({{buddhism.ongoingCount}})
-                                    </a>
-                                </li>
-                                <li class="tab col s4">
-                                    <a ng-class="{'active': buddhism.activeTab === 'upcoming'}" 
-                                       ng-click="buddhism.setActiveTab('upcoming')">
-                                       Upcoming ({{buddhism.upcomingCount}})
-                                    </a>
-                                </li>
-                                <li class="tab col s4">
-                                    <a ng-class="{'active': buddhism.activeTab === 'past'}" 
-                                       ng-click="buddhism.setActiveTab('past')">
-                                       Past ({{buddhism.pastCount}})
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                    
-                    <!-- Challenge Cards -->
-                    <div class="row" ng-if="buddhism.filteredChallenges.length > 0">
-                        <div class="col s12 m6 l3" ng-repeat="challenge in buddhism.filteredChallenges">
-                            <div class="card">
-                                <div class="card-image">
-                                    <img ng-src="{{challenge.image}}" alt="{{challenge.title}}">
-                                </div>
-                                <div class="card-content">
-                                    <span class="card-title">{{challenge.title}}</span>
-                                    <p class="organizer"><strong>Organizer:</strong> {{challenge.organizer}}</p>
-                                    <p class="dates">
-                                        <span class="start-date"><strong>Start:</strong> {{challenge.startDate}}</span><br>
-                                        <span class="end-date"><strong>End:</strong> {{challenge.endDate}}</span>
-                                    </p>
-                                    <!-- Add leaderboard chart for each challenge from API -->
-                                    <!-- <div ng-if="buddhism.leaderboards[challenge.id]">
-                                        <h6 class="center-align">Leaderboard</h6>
-                                        <canvas id="challenge-{{challenge.id}}-chart" height="200"></canvas>
-                                    </div> -->
-                                    <!-- Show message if no leaderboard data available -->
-                                    <!-- <div ng-if="!buddhism.leaderboards[challenge.id]" class="center-align">
-                                        <p><em>No leaderboard data available</em></p>
-                                    </div> -->
-                                    
-                                </div>
-                                <div class="card-action">
-                                    <a ng-href="{{challenge.url}}" target="_blank">View Details</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- No challenges message -->
-                    <div class="row" ng-if="buddhism.filteredChallenges.length === 0">
-                        <div class="col s12 center-align">
-                            <p>No {{buddhism.activeTab}} challenges at the moment.</p>
-                        </div>
-                    </div>
-                </div>
+        <button
+          class="scroll-button scroll-button--left"
+          ng-click="buddhism.scrollSection('translation','left')"
+          aria-label="Previous"
+        >
+          ‹
+        </button>
+        <button
+          class="scroll-button scroll-button--right"
+          ng-click="buddhism.scrollSection('translation','right')"
+          aria-label="Next"
+        >
+          ›
+        </button>
+      </div>
+  
+      <!-- Challenges Section -->
+      <div class="card challenges-section">
+        <h5 class="section-title">Challenges</h5>
+  
+        <!-- Tab Navigation -->
+        <div class="tabs-container">
+          <ul class="tabs">
+            <li>
+              <a
+                class="tab-button"
+                ng-class="{'active': buddhism.activeTab==='ongoing'}"
+                ng-click="buddhism.setActiveTab('ongoing')"
+              >
+                Ongoing ({{buddhism.ongoingCount}})
+              </a>
+            </li>
+            <li>
+              <a
+                class="tab-button"
+                ng-class="{'active': buddhism.activeTab==='upcoming'}"
+                ng-click="buddhism.setActiveTab('upcoming')"
+              >
+                Upcoming ({{buddhism.upcomingCount}})
+              </a>
+            </li>
+            <li>
+              <a
+                class="tab-button"
+                ng-class="{'active': buddhism.activeTab==='past'}"
+                ng-click="buddhism.setActiveTab('past')"
+              >
+                Past ({{buddhism.pastCount}})
+              </a>
+            </li>
+          </ul>
+        </div>
+  
+        <!-- Challenge Cards Grid -->
+        <div class="challenges-grid" ng-if="buddhism.filteredChallenges.length > 0">
+          <div
+            ng-repeat="challenge in buddhism.filteredChallenges"
+            class="challenge-card"
+          >
+            <div class="challenge-card__image">
+              <img ng-src="{{challenge.image}}" alt="{{challenge.title}}" />
             </div>
+            <div class="challenge-card__content">
+              <span class="challenge-card__title">{{challenge.title}}</span>
+              <p class="challenge-card__organizer">
+                <strong>Organizer:</strong> {{challenge.organizer}}
+              </p>
+              <p class="challenge-card__dates">
+                <span><strong>Start:</strong> {{challenge.startDate}}</span><br />
+                <span><strong>End:</strong> {{challenge.endDate}}</span>
+              </p>
+            </div>
+            <div class="challenge-card__footer">
+              <a
+                ng-href="{{challenge.url}}"
+                target="_blank"
+                class="challenge-card__link"
+              >
+                View Details
+              </a>
+            </div>
+          </div>
         </div>
+  
+        <!-- No challenges message -->
+        <div
+          class="no-challenges"
+          ng-if="buddhism.filteredChallenges.length === 0"
+        >
+          <p class="no-challenges__text">
+            No {{buddhism.activeTab}} challenges at the moment.
+          </p>
+        </div>
+      </div>
     </div>
-</section>
+  </section>
+  
