@@ -40,45 +40,6 @@
                     organizer: "OpenPecha Team",
                     image: "https://placehold.co/600x400?text=Tibetan+English",
                     url: vm.baseUrl + "/web/challenges/challenge-page/1/overview"
-                },
-                {
-                    id: "bo-en-literal",
-                    title: "Tibetan-English Literal Translation",
-                    metricName: "Literal Score",
-                    description: "This challenge evaluates the literal accuracy of Tibetan to English translations.",
-                    status: "ongoing",
-                    startDate: "May 1, 2025",
-                    endDate: "Aug 1, 2025",
-                    participants: 10,
-                    organizer: "Dharma AI",
-                    image: "https://placehold.co/600x400?text=Buddhist+QA",
-                    url: vm.baseUrl + "/web/challenges/challenge-page/2/overview"
-                },
-                {
-                    id: "bo-zh-readable",
-                    title: "Tibetan-Chinese Readable Translation",
-                    metricName: "Readability Score",
-                    description: "This challenge evaluates the readability of Tibetan to Chinese translations.",
-                    status: "ongoing",
-                    startDate: "May 1, 2025",
-                    endDate: "Aug 1, 2025",
-                    participants: 8,
-                    organizer: "Buddhist Digital Resource Center",
-                    image: "https://placehold.co/600x400?text=Tibetan+OCR",
-                    url: vm.baseUrl + "/web/challenges/challenge-page/3/overview"
-                },
-                {
-                    id: "pi-bo-sutra",
-                    title: "Pali-Tibetan Sutra Translation",
-                    metricName: "Translation Accuracy",
-                    description: "This challenge evaluates the accuracy of Pali to Tibetan sutra translations.",
-                    status: "ongoing",
-                    startDate: "May 1, 2025",
-                    endDate: "Aug 1, 2025",
-                    participants: 6,
-                    organizer: "Pali Text Society",
-                    image: "https://placehold.co/600x400?text=Pali+Translation",
-                    url: vm.baseUrl + "/web/challenges/challenge-page/4/overview"
                 }
             ];
             
@@ -463,6 +424,8 @@
                                                     
                                                     // Store the processed leaderboard data
                                                     vm.leaderboards[challengeId] = processedData;
+                                                    vm.translationChallenges.push(processedData);
+                                                    console.log('Translation challenges:', vm.translationChallenges);
                                                     
                                                     // Return the leaderboard data through callback
                                                     if (callback) {
@@ -705,7 +668,7 @@
             });
             
             // For translation challenges, we'll use the leaderboard data if available
-            vm.translationChallenges.push(...vm.leaderboards);
+            // vm.translationChallenges.push(...vm.leaderboards.entries);
             // Otherwise, we'll show a message that no data is available
             console.log('Initializing charts for translation challenges', vm.translationChallenges);
             vm.translationChallenges.forEach(function(challenge) {
