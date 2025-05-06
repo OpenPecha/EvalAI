@@ -528,10 +528,12 @@
         vm.plotLeaderboardData = function(challengeId, chartElementId) {
             // Get the leaderboard data
             if (vm.leaderboards[challengeId]) {
+                console.log('Using cached leaderboard data for challenge:', challengeId);
                 // Use cached data if available
                 var leaderboardData = vm.leaderboards[challengeId];
                 vm.renderLeaderboardChart(leaderboardData, chartElementId);
             } else {
+                
                 // Fetch data if not available
                 vm.getLeaderboardForChallenge(challengeId, function(leaderboardData) {
                     if (leaderboardData && leaderboardData.entries && leaderboardData.entries.length > 0) {
