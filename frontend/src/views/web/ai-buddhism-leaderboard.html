@@ -19,7 +19,16 @@
                                 <div class="card">
                                     <div class="card-content">
                                         <span class="card-title">{{challenge.challengeTitle}}</span>
-                                        <canvas id="{{challenge.id}}-chart" height="200"></canvas>
+                                        <!-- <canvas id="{{challenge.id}}-chart" height="200"></canvas> -->
+                                        <!-- Add leaderboard chart for each challenge from API -->
+                                        <div ng-if="buddhism.leaderboards[challenge.id]">
+                                            <!-- <h6 class="center-align">Leaderboard</h6> -->
+                                            <canvas id="challenge-{{challenge.id}}-chart" height="200"></canvas>
+                                        </div>
+                                        <!-- Show message if no leaderboard data available -->
+                                        <div ng-if="!buddhism.leaderboards[challenge.id]" class="center-align">
+                                            <p><em>No leaderboard data available</em></p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -87,15 +96,7 @@
                                         <span class="start-date"><strong>Start:</strong> {{challenge.startDate}}</span><br>
                                         <span class="end-date"><strong>End:</strong> {{challenge.endDate}}</span>
                                     </p>
-                                    <!-- Add leaderboard chart for each challenge from API -->
-                                    <div ng-if="buddhism.leaderboards[challenge.id]">
-                                        <h6 class="center-align">Leaderboard</h6>
-                                        <canvas id="challenge-{{challenge.id}}-chart" height="200"></canvas>
-                                    </div>
-                                    <!-- Show message if no leaderboard data available -->
-                                    <div ng-if="!buddhism.leaderboards[challenge.id]" class="center-align">
-                                        <p><em>No leaderboard data available</em></p>
-                                    </div>
+                                    
                                 </div>
                                 <div class="card-action">
                                     <a ng-href="{{challenge.url}}" target="_blank">View Details</a>
