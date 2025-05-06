@@ -172,6 +172,8 @@
         overflow: hidden;
         box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         transition: box-shadow .2s;
+        display: flex;
+        flex-direction: column;
         }
         .challenge-card:hover {
         box-shadow: 0 4px 6px rgba(0,0,0,0.1);
@@ -183,6 +185,7 @@
         }
         .challenge-card__content {
         padding: 1rem;
+        flex: 1;
         }
         .challenge-card__title {
         font-size: 1.25rem;
@@ -194,8 +197,8 @@
         }
         .challenge-card__footer {
         padding: .75rem 1rem;
-        border-top: 1px solid #e5e7eb;
-        text-align: right;
+        border-top: 1px solid #000000;
+        text-align: center;
         }
         .challenge-card__link {
         color: #3b82f6;
