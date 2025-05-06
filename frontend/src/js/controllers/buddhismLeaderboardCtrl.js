@@ -28,64 +28,64 @@
         vm.initialize = function() {
             // Initialize empty translation challenges array
             vm.translationChallenges = [
-                {
-                        "challengeId": 21,
-                        "challengeTitle": "STT-Challenge TASHI TEST",
-                        "entries": [
-                            {
-                                "methodName": "Ganga_Model",
-                                "teamName": "OpenPecha_STT_team",
-                                "result": [
-                                    0.0455,
-                                    0.9042
-                                ],
-                                "submittedAt": "2025-04-11T06:14:02.188502Z",
-                                "schemaLabels": [
-                                    "WER",
-                                    "CER"
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        "challengeId": 22,
-                        "challengeTitle": "Machine Translation Challenge TASHI TEST",
-                        "entries": [
-                            {
-                                "methodName": "claude-3-7-sonnet-latest",
-                                "teamName": "OpenPecha_MT_team",
-                                "result": [
-                                    10.38
-                                ],
-                                "submittedAt": "2025-04-30T09:19:46.475320Z",
-                                "schemaLabels": [
-                                    "LLMScore"
-                                ]
-                            },
-                            {
-                                "methodName": "gemini-1.5-pro",
-                                "teamName": "OpenPecha_MT_team",
-                                "result": [
-                                    5.39
-                                ],
-                                "submittedAt": "2025-04-30T11:50:42.828254Z",
-                                "schemaLabels": [
-                                    "LLMScore"
-                                ]
-                            },
-                            {
-                                "methodName": "ChatGPT 4",
-                                "teamName": "OpenPecha_MT_team",
-                                "result": [
-                                    3.02
-                                ],
-                                "submittedAt": "2025-05-01T04:25:35.397179Z",
-                                "schemaLabels": [
-                                    "LLMScore"
-                                ]
-                            }
-                        ]
-                    }
+                // {
+                //     "challengeId": 21,
+                //     "challengeTitle": "STT-Challenge TASHI TEST",
+                //     "entries": [
+                //         {
+                //             "methodName": "Ganga_Model",
+                //             "teamName": "OpenPecha_STT_team",
+                //             "result": [
+                //                 0.0455,
+                //                 0.9042
+                //             ],
+                //             "submittedAt": "2025-04-11T06:14:02.188502Z",
+                //             "schemaLabels": [
+                //                 "WER",
+                //                 "CER"
+                //             ]
+                //         }
+                //     ]
+                // },
+                // {
+                //     "challengeId": 22,
+                //     "challengeTitle": "Machine Translation Challenge TASHI TEST",
+                //     "entries": [
+                //         {
+                //             "methodName": "claude-3-7-sonnet-latest",
+                //             "teamName": "OpenPecha_MT_team",
+                //             "result": [
+                //                 10.38
+                //             ],
+                //             "submittedAt": "2025-04-30T09:19:46.475320Z",
+                //             "schemaLabels": [
+                //                 "LLMScore"
+                //             ]
+                //         },
+                //         {
+                //             "methodName": "gemini-1.5-pro",
+                //             "teamName": "OpenPecha_MT_team",
+                //             "result": [
+                //                 5.39
+                //             ],
+                //             "submittedAt": "2025-04-30T11:50:42.828254Z",
+                //             "schemaLabels": [
+                //                 "LLMScore"
+                //             ]
+                //         },
+                //         {
+                //             "methodName": "ChatGPT 4",
+                //             "teamName": "OpenPecha_MT_team",
+                //             "result": [
+                //                 3.02
+                //             ],
+                //             "submittedAt": "2025-05-01T04:25:35.397179Z",
+                //             "schemaLabels": [
+                //                 "LLMScore"
+                //             ]
+                //         }
+                //     ]
+                // }
 
             ];
             
