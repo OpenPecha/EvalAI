@@ -764,15 +764,15 @@
                                 responsive: true,
                                 scales: {
                                     y: {
-                                        display: false
+                                        display: true
                                     }
                                 },
                                 plugins: {
                                     legend: {
-                                        display: false
+                                        display: true
                                     },
                                     title: {
-                                        display: true,
+                                        display: false,
                                         text: challenge.metricName + ' (No Data)'
                                     }
                                 }
