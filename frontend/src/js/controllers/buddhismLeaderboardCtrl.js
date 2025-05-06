@@ -27,21 +27,63 @@
         // Initialize the controller
         vm.initialize = function() {
             // Load translation challenges data
-            vm.translationChallenges = [
-                {
-                    id: "bo-en-factuality",
-                    title: "Tibetan-English Translation Factuality",
-                    metricName: "Factual Accuracy",
-                    description: "This challenge evaluates the factual accuracy of Tibetan to English translations.",
-                    status: "ongoing",
-                    startDate: "May 1, 2025",
-                    endDate: "Aug 1, 2025",
-                    participants: 12,
-                    organizer: "OpenPecha Team",
-                    image: "https://placehold.co/600x400?text=Tibetan+English",
-                    url: vm.baseUrl + "/web/challenges/challenge-page/1/overview"
-                }
-            ];
+            // vm.translationChallenges = [
+            //     {
+            //         id: "bo-en-factuality",
+            //         title: "Tibetan-English Translation Factuality",
+            //         metricName: "Factual Accuracy",
+            //         description: "This challenge evaluates the factual accuracy of Tibetan to English translations.",
+            //         status: "ongoing",
+            //         startDate: "May 1, 2025",
+            //         endDate: "Aug 1, 2025",
+            //         participants: 12,
+            //         organizer: "OpenPecha Team",
+            //         image: "https://placehold.co/600x400?text=Tibetan+English",
+            //         url: vm.baseUrl + "/web/challenges/challenge-page/1/overview"
+            //     },
+            //     {
+            //         id: "bo-en-literal",
+            //         title: "Tibetan-English Literal Translation",
+            //         metricName: "Literal Score",
+            //         description: "This challenge evaluates the literal accuracy of Tibetan to English translations.",
+            //         status: "ongoing",
+            //         startDate: "May 1, 2025",
+            //         endDate: "Aug 1, 2025",
+            //         participants: 10,
+            //         organizer: "Dharma AI",
+            //         image: "https://placehold.co/600x400?text=Buddhist+QA",
+            //         url: vm.baseUrl + "/web/challenges/challenge-page/2/overview"
+            //     },
+            //     {
+            //         id: "bo-zh-readable",
+            //         title: "Tibetan-Chinese Readable Translation",
+            //         metricName: "Readability Score",
+            //         description: "This challenge evaluates the readability of Tibetan to Chinese translations.",
+            //         status: "ongoing",
+            //         startDate: "May 1, 2025",
+            //         endDate: "Aug 1, 2025",
+            //         participants: 8,
+            //         organizer: "Buddhist Digital Resource Center",
+            //         image: "https://placehold.co/600x400?text=Tibetan+OCR",
+            //         url: vm.baseUrl + "/web/challenges/challenge-page/3/overview"
+            //     },
+            //     {
+            //         id: "pi-bo-sutra",
+            //         title: "Pali-Tibetan Sutra Translation",
+            //         metricName: "Translation Accuracy",
+            //         description: "This challenge evaluates the accuracy of Pali to Tibetan sutra translations.",
+            //         status: "ongoing",
+            //         startDate: "May 1, 2025",
+            //         endDate: "Aug 1, 2025",
+            //         participants: 6,
+            //         organizer: "Pali Text Society",
+            //         image: "https://placehold.co/600x400?text=Pali+Translation",
+            //         url: vm.baseUrl + "/web/challenges/challenge-page/4/overview"
+            //     }
+            // ];
+            
+            // Generate synthetic leaderboard data for translation challenges
+            vm.generateTranslationLeaderboardData();
             
             // Load other challenges data
             vm.otherChallenges = [
@@ -509,7 +551,7 @@
         };
         
         // Render the leaderboard chart with the provided data
-        vm.rendeLeaderboardrChart = function(leaderboardData, chartElementId) {
+        vm.renderLeaderboardChart = function(leaderboardData, chartElementId) {
             console.log('Rendering chart for challenge:', leaderboardData.challengeId, 'with data:', leaderboardData);
             
             // Get the canvas element
@@ -650,6 +692,77 @@
             console.log('Chart created successfully');
         };
         
+        // Generate synthetic leaderboard data for translation challenges
+        vm.generateTranslationLeaderboardData = function() {
+            // Models to use in the leaderboard
+            var models = [
+                { name: "GPT-4", team: "OpenAI" },
+                { name: "Claude 3", team: "Anthropic" },
+                { name: "Llama 3", team: "Meta AI" },
+                { name: "Gemini", team: "Google" },
+                { name: "Mistral", team: "Mistral AI" }
+            ];
+            
+            // Generate data for each translation challenge
+            vm.translationChallenges.forEach(function(challenge) {
+                // Create entries for this challenge
+                var entries = [];
+                
+                // Generate 5 entries with different models
+                models.forEach(function(model, index) {
+                    // Determine if this entry should have multiple metrics
+                    var hasMultipleMetrics = challenge.id === "bo-en-factuality" || challenge.id === "bo-zh-readable";
+                    
+                    // Create entry with appropriate metrics
+                    var entry = {
+                        methodName: model.name,
+                        teamName: model.team,
+                        submittedAt: new Date(2025, 4, 15 - index).toISOString(),
+                        score: (Math.random() * 15 + 80).toFixed(2) // Random score between 80-95
+                    };
+                    
+                    // Add different result formats based on challenge type
+                    if (hasMultipleMetrics) {
+                        // Multiple metrics
+                        if (challenge.id === "bo-en-factuality") {
+                            entry.result = [
+                                (Math.random() * 15 + 80).toFixed(2), // Factual accuracy score
+                                (Math.random() * 20 + 75).toFixed(2)  // Fluency score
+                            ];
+                            entry.schemaLabels = ["Factual Accuracy", "Fluency"];
+                        } else {
+                            entry.result = [
+                                (Math.random() * 15 + 80).toFixed(2), // Readability score
+                                (Math.random() * 15 + 80).toFixed(2), // Accuracy score
+                                (Math.random() * 15 + 80).toFixed(2)  // Cultural appropriateness score
+                            ];
+                            entry.schemaLabels = ["Readability", "Accuracy", "Cultural Appropriateness"];
+                        }
+                    } else {
+                        // Single metric
+                        entry.result = [(Math.random() * 15 + 80).toFixed(2)];
+                        entry.schemaLabels = [challenge.metricName];
+                    }
+                    
+                    entries.push(entry);
+                });
+                
+                // Sort entries by the first result metric (descending)
+                entries.sort(function(a, b) {
+                    return parseFloat(b.result[0]) - parseFloat(a.result[0]);
+                });
+                
+                // Store the processed leaderboard data
+                vm.leaderboards[challenge.id] = {
+                    challengeId: challenge.id,
+                    challengeTitle: challenge.title,
+                    entries: entries
+                };
+                
+                console.log('Generated leaderboard data for:', challenge.title, vm.leaderboards[challenge.id]);
+            });
+        };
+        
         // Initialize charts for each challenge
         vm.initializeCharts = function() {
             console.log('Initializing charts for challenges');
@@ -667,45 +780,48 @@
                 }
             });
             
-            // For translation challenges, we'll use the leaderboard data if available
-            // vm.translationChallenges.push(...vm.leaderboards.entries);
-            // Otherwise, we'll show a message that no data is available
-            console.log('Initializing charts for translation challenges', vm.translationChallenges);
+            // For translation challenges, use the synthetic leaderboard data
             vm.translationChallenges.forEach(function(challenge) {
-                console.log('Processing translation challenge:', challenge);
                 var ctx = document.getElementById(challenge.id + '-chart');
                 if (ctx) {
-                    // Create a placeholder chart with "No data available" message
-                    new Chart(ctx, {
-                        type: 'bar',
-                        data: {
-                            labels: ['No real-time data available'],
-                            datasets: [{
-                                label: 'Score',
-                                data: [0],
-                                backgroundColor: 'rgba(200, 200, 200, 0.2)',
-                                borderColor: 'rgba(200, 200, 200, 1)',
-                                borderWidth: 1
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            scales: {
-                                y: {
-                                    display: false
-                                }
+                    console.log('Rendering chart for translation challenge:', challenge.id);
+                    // Use the same rendering function as for API challenges
+                    if (vm.leaderboards[challenge.id]) {
+                        vm.renderLeaderboardChart(vm.leaderboards[challenge.id], challenge.id + '-chart');
+                    } else {
+                        console.warn('No leaderboard data available for translation challenge:', challenge.id);
+                        // Create a placeholder chart with "No data available" message
+                        new Chart(ctx, {
+                            type: 'bar',
+                            data: {
+                                labels: ['No data available'],
+                                datasets: [{
+                                    label: 'Score',
+                                    data: [0],
+                                    backgroundColor: 'rgba(200, 200, 200, 0.2)',
+                                    borderColor: 'rgba(200, 200, 200, 1)',
+                                    borderWidth: 1
+                                }]
                             },
-                            plugins: {
-                                legend: {
-                                    display: false
+                            options: {
+                                responsive: true,
+                                scales: {
+                                    y: {
+                                        display: false
+                                    }
                                 },
-                                title: {
-                                    display: true,
-                                    text: challenge.metricName + ' (Demo)'
+                                plugins: {
+                                    legend: {
+                                        display: false
+                                    },
+                                    title: {
+                                        display: true,
+                                        text: challenge.metricName + ' (No Data)'
+                                    }
                                 }
                             }
-                        }
-                    });
+                        });
+                    }
                 }
             });
         };
