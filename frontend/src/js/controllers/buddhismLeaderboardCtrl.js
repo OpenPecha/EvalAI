@@ -596,7 +596,7 @@
                             "teamName": "OpenPecha_STT_team",
                             "result": [
                                 0.0455,
-                                0.042
+                                0.9042
                             ],
                             "submittedAt": "2025-04-11T06:14:02.188502Z",
                             "schemaLabels": [
@@ -608,13 +608,13 @@
                 },
                 {
                     "challengeId": 22,
-                    "challengeTitle": "Machine Translation Challenge",
+                    "challengeTitle": "Machine Translation Challenge TASHI TEST",
                     "entries": [
                         {
                             "methodName": "claude-3-7-sonnet-latest",
                             "teamName": "OpenPecha_MT_team",
                             "result": [
-                                6.38
+                                10.38
                             ],
                             "submittedAt": "2025-04-30T09:19:46.475320Z",
                             "schemaLabels": [
