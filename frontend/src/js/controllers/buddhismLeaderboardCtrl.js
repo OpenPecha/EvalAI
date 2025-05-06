@@ -528,7 +528,8 @@
                                   firstEntry.schemaLabels.slice(0, firstEntry.result.length) : 
                                   firstEntry.result.map(function(_, i) { return 'Metric ' + (i+1); });
                 } else {
-                    metricLabels = ['Score'];
+                    hasMultipleMetrics = true;
+                    metricLabels = [firstEntry.schemaLabels[0]];
                 }
             }
             
@@ -619,7 +620,7 @@
                             position: 'top'
                         },
                         title: {
-                            display: true,
+                            display: false,
                             text: leaderboardData.challengeTitle || 'Leaderboard Scores'
                         },
                         tooltip: {
@@ -741,7 +742,7 @@
             vm.translationChallenges.forEach(function(challenge) {
                 var ctx = document.getElementById(challenge.id + '-chart');
                 if (ctx) {
-                    console.log('Rendering chart for translation challenge:', challenge.id);
+                    console.log('Renering chart for tdranslation challenge:', challenge.id);
                     // Use the same rendering function as for API challenges
                     if (vm.leaderboards[challenge.id]) {
                         vm.renderLeaderboardChart(vm.leaderboards[challenge.id], challenge.id + '-chart');
