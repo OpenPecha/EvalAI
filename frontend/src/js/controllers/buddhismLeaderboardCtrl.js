@@ -546,7 +546,7 @@
         };
         
         // Render the leaderboard chart with the provided data
-        vm.renderLeaderboardChart = function(leaderboardData, chartElementId) {
+        vm.rendeLeaderboardrChart = function(leaderboardData, chartElementId) {
             console.log('Rendering chart for challenge:', leaderboardData.challengeId, 'with data:', leaderboardData);
             
             // Get the canvas element
@@ -705,8 +705,11 @@
             });
             
             // For translation challenges, we'll use the leaderboard data if available
+            vm.translationChallenges.push(...vm.leaderboards);
             // Otherwise, we'll show a message that no data is available
+            console.log('Initializing charts for translation challenges', vm.translationChallenges);
             vm.translationChallenges.forEach(function(challenge) {
+                console.log('Processing translation challenge:', challenge);
                 var ctx = document.getElementById(challenge.id + '-chart');
                 if (ctx) {
                     // Create a placeholder chart with "No data available" message
