@@ -1,4 +1,222 @@
 <section class="app-container">
+    <style>
+        /* layout */
+        .app-container {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        }
+
+        .main-content {
+        flex: 1;
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+        }
+
+        /* typography */
+        .page-title {
+        font-family: 'Cormorant', serif;
+        font-size: 2.25rem;
+        font-weight: bold;
+        margin-bottom: 2rem;
+        }
+
+        .section-title {
+        font-family: 'Cormorant', serif;
+        font-size: 1.875rem;
+        font-weight: bold;
+        margin-bottom: 1.5rem;
+        text-align: center;
+        }
+
+        /* cards */
+        .card {
+        background-color: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: .5rem;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        padding: 1.5rem;
+        margin-bottom: 3rem;
+        }
+
+        /* leaderboard */
+        .leaderboard-section {
+        position: relative;
+        }
+
+        .scroll-container {
+        display: flex;
+        gap: 2rem;
+        overflow-x: auto;
+        padding-bottom: 1.5rem;
+        scroll-behavior: smooth;
+        /* thin scrollbar */
+        scrollbar-width: thin;
+        scrollbar-color: #d1d5db transparent;
+        }
+        .scroll-container::-webkit-scrollbar {
+        height: .25rem;
+        }
+        .scroll-container::-webkit-scrollbar-thumb {
+        background: #d1d5db;
+        }
+        .scroll-container::-webkit-scrollbar-track {
+        background: transparent;
+        }
+
+        .scroll-button {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background-color: rgba(255,255,255,0.8);
+        border-radius: 9999px;
+        padding: .5rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        transition: background-color .2s;
+        display: none;
+        }
+        @media (min-width: 640px) {
+        .scroll-button { display: block; }
+        }
+        .scroll-button:hover { background-color: #fff; }
+        .scroll-button--left {
+        left: -1rem;
+        }
+        @media (min-width: 640px) {
+        .scroll-button--left { left: -1.5rem; }
+        }
+        .scroll-button--right {
+        right: -1rem;
+        }
+        @media (min-width: 640px) {
+        .scroll-button--right { right: -1.5rem; }
+        }
+
+        .leaderboard-card {
+        flex-shrink: 0;
+        width: 100%;
+        border: 1px solid #e5e7eb;
+        border-radius: .5rem;
+        overflow: hidden;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        transition: box-shadow .2s;
+        }
+        .leaderboard-card:hover {
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .leaderboard-card__header {
+        padding: .75rem;
+        background-color: #f9fafb;
+        border-bottom: 1px solid #e5e7eb;
+        text-align: center;
+        }
+        .leaderboard-card__title {
+        font-size: 1rem;
+        font-weight: 600;
+        }
+        .leaderboard-card__body {
+        padding: .75rem .5rem;
+        }
+
+        /* tabs */
+        .tabs-container {
+        border-bottom: 1px solid #e5e7eb;
+        margin-bottom: 1.5rem;
+        }
+        .tabs {
+        display: flex;
+        }
+        .tab-button {
+        padding: .75rem 1.5rem;
+        font-size: .875rem;
+        font-weight: 500;
+        border-bottom: 2px solid transparent;
+        background: none;
+        cursor: pointer;
+        color: #6b7280;
+        transition: color .2s, border-color .2s;
+        }
+        .tab-button:hover {
+        color: #374151;
+        }
+        .tab-button.active {
+        border-color: #3b82f6;
+        color: #2563eb;
+        }
+
+        /* challenges grid */
+        .challenges-grid {
+        display: grid;
+        grid-template-columns: repeat(1,1fr);
+        gap: 1.5rem;
+        }
+        @media (min-width: 640px) {
+        .challenges-grid {
+            grid-template-columns: repeat(2,1fr);
+        }
+        }
+        @media (min-width: 1024px) {
+        .challenges-grid {
+            grid-template-columns: repeat(3,1fr);
+        }
+        }
+        @media (min-width: 1280px) {
+        .challenges-grid {
+            grid-template-columns: repeat(4,1fr);
+        }
+        }
+
+        .challenge-card {
+        border: 1px solid #e5e7eb;
+        border-radius: .5rem;
+        overflow: hidden;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        transition: box-shadow .2s;
+        }
+        .challenge-card:hover {
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .challenge-card__image img {
+        width: 100%;
+        height: auto;
+        }
+        .challenge-card__content {
+        padding: 1rem;
+        }
+        .challenge-card__title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        }
+        .challenge-card__organizer,
+        .challenge-card__dates {
+        margin-top: .5rem;
+        }
+        .challenge-card__footer {
+        padding: .75rem 1rem;
+        border-top: 1px solid #e5e7eb;
+        text-align: right;
+        }
+        .challenge-card__link {
+        color: #3b82f6;
+        text-decoration: none;
+        }
+        .challenge-card__link:hover {
+        text-decoration: underline;
+        }
+
+        /* no challenges */
+        .no-challenges {
+        grid-column: 1 / -1;
+        padding: 3rem 0;
+        text-align: center;
+        color: #6b7280;
+        }
+        .no-challenges__text {
+        font-size: 1.125rem;
+        }
+
+    </style>
     <div class="main-content">
   
       <div>
