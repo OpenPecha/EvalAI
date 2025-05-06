@@ -357,7 +357,7 @@
                                                     
                                                     // Store the processed leaderboard data
                                                     vm.leaderboards[challengeId] = processedData;
-                                                    vm.translationChallenges.push(processedData);
+                                                    // vm.translationChallenges.push(processedData);
                                                     console.log('Translation challenges:', vm.translationChallenges);
                                                     
                                                     // Return the leaderboard data through callback
