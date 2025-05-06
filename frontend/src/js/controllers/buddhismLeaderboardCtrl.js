@@ -386,11 +386,11 @@
         // Function to get leaderboard data for a specific challenge
         vm.getLeaderboardForChallenge = function(challengeId, callback) {
             // Only proceed if this is a numeric ID (real challenge from API)
-            if (isNaN(parseInt(challengeId))) {
-                console.log('Skipping leaderboard fetch for non-numeric ID:', challengeId);
-                if (callback) callback([]);
-                return;
-            }
+            // if (isNaN(parseInt(challengeId))) {
+            //     console.log('Skipping leaderboard fetch for non-numeric ID:', challengeId);
+            //     if (callback) callback([]);
+            //     return;
+            // }
             
             console.log('Fetching leaderboard for challenge ID:', challengeId);
             
