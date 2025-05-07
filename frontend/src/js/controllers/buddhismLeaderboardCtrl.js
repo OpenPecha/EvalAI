@@ -679,17 +679,17 @@
                 options: {
                     responsive: true,
                     scales: {
-                        // x: {
-                        //     // force Chart.js to actually _draw_ our wrapped labels
-                        //     ticks: {
-                        //       autoSkip: false,
-                        //       maxRotation: 0,
-                        //       minRotation: 0,
-                        //       callback: function(_, idx) {
-                        //         return wrappedLabels[idx];
-                        //       }
-                        //     }
-                        //   },
+                        x: {
+                            // force Chart.js to actually _draw_ our wrapped labels
+                            ticks: {
+                              autoSkip: false,
+                              maxRotation: 0,
+                              minRotation: 0,
+                              callback: function(_, idx) {
+                                return wrappedLabels[idx];
+                              }
+                            }
+                          },
                         y: {
                             beginAtZero: true,
                             // Set min/max based on data range
@@ -727,6 +727,11 @@
                                     }
                                     label += context.parsed.y.toFixed(3);
                                     return label;
+                                },
+                                title: function(items) {
+                                    // items is an array of tooltip items, we only need the first
+                                    return wrapLabel(items[0].label, 10);
+                      
                                 }
                             }
                         }
