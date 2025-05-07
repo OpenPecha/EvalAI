@@ -607,7 +607,7 @@
             // });
             // build wrapped labels
             const rawLabels = topEntries.map(entry => entry.methodName || 'Unknown Method');
-            const wrappedLabels = rawLabels.map(l => wrapLabel(l, 17));
+            const wrappedLabels = rawLabels.map(l => wrapLabel(l, 20));
             labels = wrappedLabels;
             // Create datasets based on metrics
             if (hasMultipleMetrics) {
@@ -675,13 +675,13 @@
                         y: {
                             beginAtZero: true,
                             // Set min/max based on data range
-                            min: function() {
-                                var allValues = [];
-                                datasets.forEach(function(dataset) {
-                                    allValues = allValues.concat(dataset.data);
-                                });
-                                return Math.max(0, Math.min.apply(null, allValues) * 0.9);
-                            }(),
+                            // min: function() {
+                            //     var allValues = [];
+                            //     datasets.forEach(function(dataset) {
+                            //         allValues = allValues.concat(dataset.data);
+                            //     });
+                            //     return Math.max(0, Math.min.apply(null, allValues) * 0.9);
+                            // }(),
                             max: function() {
                                 var allValues = [];
                                 datasets.forEach(function(dataset) {
@@ -707,7 +707,7 @@
                                     if (label) {
                                         label += ': ';
                                     }
-                                    label += context.parsed.y.toFixed(3);
+                                    // label += context.parsed.y.toFixed(3);
                                     return label;
                                 }
                             }
