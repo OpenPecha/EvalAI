@@ -688,6 +688,9 @@
                               minRotation: 0,
                               callback: function(_, idx) {
                                 return wrappedLabels[idx];
+                              },
+                              userCallback: function(_, idx) {
+                                return wrappedLabels[idx];
                               }
                             }
                           },
@@ -728,11 +731,6 @@
                                     }
                                     label += context.parsed.y.toFixed(3);
                                     return label;
-                                },
-                                title: function(items) {
-                                    // items is an array of tooltip items, we only need the first
-                                    return wrapLabel(items[0].label, 10);
-                      
                                 }
                             }
                         }
