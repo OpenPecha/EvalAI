@@ -638,7 +638,7 @@
                     label: metricLabels[0],
                     data: scoreData,
                     backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderColor: 'rgb(0, 0, 0)',
                     borderWidth: 1
                 });
             }
@@ -671,7 +671,7 @@
                                 display: true,
                                 text: 'Method Names',
                                 font: {
-                                    size: 20,
+                                    size: 15,
                                     style: 'bold'
                                 }
                             }
