@@ -660,12 +660,18 @@
             new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: labels,
+                    labels: wrappedLabels,
                     datasets: datasets
                 },
                 options: {
                     responsive: true,
                     scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Method Names'
+                            }
+                        },
                         y: {
                             beginAtZero: true,
                             // Set min/max based on data range
@@ -697,11 +703,7 @@
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
-                                    var label = context.dataset.label || '';
-                                    if (label) {
-                                        label += ': ';
-                                    }
-                                    label += context.parsed.y.toFixed(3);
+                                    var label = rawLabels[context.dataIndex] + ': ' + context.parsed.y.toFixed(3);
                                     return label;
                                 }
                             }
