@@ -673,7 +673,8 @@
                                 font: {
                                     size: 15,
                                     style: 'bold'
-                                }
+                                },
+                                align: 'center'
                             }
                         },
                         y: {
