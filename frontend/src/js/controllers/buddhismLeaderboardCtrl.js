@@ -608,7 +608,7 @@
             // build wrapped labels
             const rawLabels = topEntries.map(entry => entry.methodName || 'Unknown Method');
             const wrappedLabels = rawLabels.map(l => wrapLabel(l, 20));
-            labels = wrappedLabels;
+            // labels = wrappedLabels;
             // Create datasets based on metrics
             if (hasMultipleMetrics) {
                 // Create a dataset for each metric
@@ -681,7 +681,7 @@
                                 autoSkip: false,
                                 maxRotation: 0,
                                 minRotation: 0,
-                                callback: (_, idx) => wrappedLabels[idx]
+                                callback: (_, idx) => rawLabels[idx]
                             }
                         },
                         y: {
