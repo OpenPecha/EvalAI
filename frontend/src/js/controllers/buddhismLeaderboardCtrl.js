@@ -665,8 +665,6 @@
                 },
                 options: {
                     responsive: true,
-                    maintainAspectRatio: false,
-                    aspectRatio: 2,
                     layout: {
                         padding: { top: 20, right: 20, bottom: 40, left: 40 }
                     },
