@@ -569,8 +569,9 @@
                 let line = '';
             
                 parts.forEach(part => {
-                // if adding this part would exceed maxLen, flush the current line
+                // if adding this part would exceed maxLen, add ... and flush the current line
                 if (line.length + part.length > maxLen) {
+                    line = line.substring(0, maxLen - 3) + '...';
                     lines.push(line.trim());
                     line = '';
                 }
@@ -621,7 +622,7 @@
             // build wrapped labels
             const rawLabels = topEntries.map(entry => entry.methodName || 'Unknown Method');
             const wrappedLabels = rawLabels.map(l => wrapLabel(l, 17));
-            labels = wrappedLabels;
+            // labels = wrappedLabels;
             // Create datasets based on metrics
             if (hasMultipleMetrics) {
                 // Create a dataset for each metric
