@@ -665,8 +665,14 @@
                 },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
+                    aspectRatio: 2,
+                    layout: {
+                        padding: { top: 20, right: 20, bottom: 40, left: 40 }
+                    },
                     scales: {
                         x: {
+                            grid: { display: false },
                             title: {
                                 display: true,
                                 text: 'Method Names',
@@ -675,6 +681,12 @@
                                     style: 'bold'
                                 },
                                 align: 'center'
+                            },
+                            ticks: {
+                                autoSkip: false,
+                                maxRotation: 0,
+                                minRotation: 0,
+                                callback: (_, idx) => wrappedLabels[idx]
                             }
                         },
                         y: {
@@ -701,6 +713,10 @@
                                     size: 16,
                                     style: 'bold'
                                 }
+                            },
+                            grid: {
+                              color: 'rgba(0,0,0,0.05)',
+                              drawBorder: false
                             }
                         }
                     },
@@ -724,10 +740,26 @@
                                     return label;
                                 }
                             }
+                        },
+                        // data labels plugin (make sure it’s loaded & registered)
+                        datalabels: {
+                            anchor: 'end',
+                            align: 'top',
+                            font: { weight: 'bold' },
+                            formatter: v => v.toFixed(2)
                         }
+                        },
+                        animation: {
+                        duration: 1000,
+                        easing: 'easeOutQuart'
+                        },
+                        hover: {
+                        mode: 'nearest',
+                        intersect: true
+                        }  
                     }
                 }
-            });
+            );
             
             console.log('Chart created successfully');
         };
