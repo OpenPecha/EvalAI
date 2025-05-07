@@ -660,7 +660,7 @@
             new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: wrappedLabels,
+                    labels: rawLabels,
                     datasets: datasets
                 },
                 options: {
@@ -681,7 +681,7 @@
                                 autoSkip: false,
                                 maxRotation: 0,
                                 minRotation: 0,
-                                callback: (_, idx) => rawLabels[idx]
+                                callback: (_, idx) => wrappedLabels[idx]
                             }
                         },
                         y: {
