@@ -561,6 +561,27 @@
         
         // Render the leaderboard chart with the provided data
         vm.renderLeaderboardChart = function(leaderboardData, chartElementId) {
+            // helper: split on hyphens or spaces, break into lines so no segment > maxLen
+            function wrapLabel(text, maxLen) {
+                // split but keep the delimiters
+                const parts = text.split(/(-| )/);
+                const lines = [];
+                let line = '';
+            
+                parts.forEach(part => {
+                // if adding this part would exceed maxLen, flush the current line
+                if (line.length + part.length > maxLen) {
+                    lines.push(line.trim());
+                    line = '';
+                }
+                line += part;
+                });
+                if (line) lines.push(line.trim());
+            
+                // join with explicit newline for Chart.js
+                return lines.join('\n');
+            }
+  
             console.log('Rendering chart for challenge:', leaderboardData.challengeId, 'with data:', leaderboardData);
             
             // Get the canvas element
@@ -593,10 +614,14 @@
                 }
             }
             
-            // Extract method names for labels
-            topEntries.forEach(function(entry) {
-                labels.push(entry.methodName || 'Unknown Method');
-            });
+            // // Extract method names for labels
+            // topEntries.forEach(function(entry) {
+            //     labels.push(wrapLabel(entry.methodName || 'Unknown Method', 20));
+            // });
+            // build wrapped labels
+            const rawLabels = topEntries.map(entry => entry.methodName || 'Unknown Method');
+
+            const labels = rawLabels.map(l => wrapLabel(l, 10));
             
             // Create datasets based on metrics
             if (hasMultipleMetrics) {
