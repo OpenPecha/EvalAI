@@ -703,7 +703,11 @@
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
-                                    var label = rawLabels[context.dataIndex] + ': ' + context.parsed.y.toFixed(3);
+                                    var label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    label += context.parsed.y.toFixed(3);
                                     return label;
                                 }
                             }
