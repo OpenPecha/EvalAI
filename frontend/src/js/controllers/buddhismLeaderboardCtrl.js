@@ -740,25 +740,9 @@
                                     return label;
                                 }
                             }
-                        },
-                        // data labels plugin (make sure it’s loaded & registered)
-                        datalabels: {
-                            anchor: 'end',
-                            align: 'top',
-                            font: { weight: 'bold' },
-                            formatter: v => v.toFixed(2)
                         }
-                        },
-                        animation: {
-                        duration: 1000,
-                        easing: 'easeOutQuart'
-                        },
-                        hover: {
-                        mode: 'nearest',
-                        intersect: true
-                        }  
                     }
-                }
+                }}
             );
             
             console.log('Chart created successfully');
