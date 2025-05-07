@@ -620,8 +620,7 @@
             // });
             // build wrapped labels
             const rawLabels = topEntries.map(entry => entry.methodName || 'Unknown Method');
-
-            const wrappedLabels = rawLabels.map(l => wrapLabel(l, 10));
+            const wrappedLabels = rawLabels.map(l => wrapLabel(l, 17));
             labels = wrappedLabels;
             // Create datasets based on metrics
             if (hasMultipleMetrics) {
@@ -680,8 +679,19 @@
                 options: {
                     responsive: true,
                     scales: {
+                        // x: {
+                        //     // force Chart.js to actually _draw_ our wrapped labels
+                        //     ticks: {
+                        //       autoSkip: false,
+                        //       maxRotation: 0,
+                        //       minRotation: 0,
+                        //       callback: function(_, idx) {
+                        //         return wrappedLabels[idx];
+                        //       }
+                        //     }
+                        //   },
                         y: {
-                            beginAtZero: false,
+                            beginAtZero: true,
                             // Set min/max based on data range
                             min: function() {
                                 var allValues = [];
