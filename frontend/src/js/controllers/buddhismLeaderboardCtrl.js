@@ -680,7 +680,7 @@
                             ticks: {
                                 autoSkip: false,
                                 maxRotation: 0,
-                                minRotation: 30,
+                                minRotation: 5,
                                 callback: (_, idx) => wrappedLabels[idx]
                             }
                         },
