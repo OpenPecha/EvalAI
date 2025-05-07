@@ -669,7 +669,11 @@
                         x: {
                             title: {
                                 display: true,
-                                text: 'Method Names'
+                                text: 'Method Names',
+                                font: {
+                                    size: 20,
+                                    style: 'bold'
+                                }
                             }
                         },
                         y: {
@@ -688,7 +692,15 @@
                                     allValues = allValues.concat(dataset.data);
                                 });
                                 return Math.max.apply(null, allValues) * 1.1;
-                            }()
+                            }(),
+                            title: {
+                                display: true,
+                                text: 'Score',
+                                font: {
+                                    size: 16,
+                                    style: 'bold'
+                                }
+                            }
                         }
                     },
                     plugins: {
@@ -707,7 +719,7 @@
                                     if (label) {
                                         label += ': ';
                                     }
-                                    // label += context.parsed.y.toFixed(3);
+                                    label += context.parsed.y.toFixed(3);
                                     return label;
                                 }
                             }
