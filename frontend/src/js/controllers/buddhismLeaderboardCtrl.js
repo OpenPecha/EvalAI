@@ -563,24 +563,10 @@
         vm.renderLeaderboardChart = function(leaderboardData, chartElementId) {
             // helper: split on hyphens or spaces, break into lines so no segment > maxLen
             function wrapLabel(text, maxLen) {
-                // split but keep the delimiters
-                const parts = text.split(/(-| )/);
-                const lines = [];
-                let line = '';
-            
-                parts.forEach(part => {
-                // if adding this part would exceed maxLen, add ... and flush the current line
-                if (line.length + part.length > maxLen) {
-                    line = line.substring(0, maxLen - 3) + '...';
-                    lines.push(line.trim());
-                    line = '';
+                if (text.length > maxLen) {
+                    return text.substring(0, maxLen - 3) + '...';
                 }
-                line += part;
-                });
-                if (line) lines.push(line.trim());
-            
-                // join with explicit newline for Chart.js
-                return lines.join('\n');
+                return text;
             }
   
             console.log('Rendering chart for challenge:', leaderboardData.challengeId, 'with data:', leaderboardData);
