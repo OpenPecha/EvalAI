@@ -665,8 +665,8 @@
                 },
                 options: {
                     responsive: true,
-                    maintainAspectRatio: false,
-                    height: 300,  // or your preferred height
+                    // ,
+                    height: 275,  // or your preferred height
                     width: 400,   // or your preferred width
                     scales: {
                         x: {
