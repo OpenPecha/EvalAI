@@ -99,6 +99,7 @@
         width: 100%;
         min-width: 420px;
         height: 320px;
+        min-height: 260px;
         border: 1px solid #e5e7eb;
         border-radius: .5rem;
         overflow: hidden;
@@ -246,7 +247,8 @@
               <div ng-if="buddhism.leaderboards[challenge.challengeId]">
                 <canvas
                   id="challenge-{{challenge.challengeId}}-chart"
-                  height="200"
+                  height="260"
+                  width="420"
                 ></canvas>
               </div>
               <div
