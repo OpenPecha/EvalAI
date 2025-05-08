@@ -664,7 +664,10 @@
                     datasets: datasets
                 },
                 options: {
-                    responsive: false,
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    height: 300,  // or your preferred height
+                    width: 400,   // or your preferred width
                     scales: {
                         x: {
                             grid: { display: false },
