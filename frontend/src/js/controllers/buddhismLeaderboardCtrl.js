@@ -664,7 +664,7 @@
                     datasets: datasets
                 },
                 options: {
-                    responsive: true,
+                    responsive: false,
                     scales: {
                         x: {
                             grid: { display: false },
