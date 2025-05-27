@@ -17,7 +17,7 @@ ADD ./karma.conf.js /code
 # Install Prerequisites
 RUN npm install -g bower gulp gulp-cli
 
-RUN npm link gulp
+# RUN npm link gulp
 
 RUN npm cache clean -f
 RUN npm install
