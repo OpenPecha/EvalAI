@@ -27,9 +27,70 @@
         // Initialize the controller
         vm.initialize = function() {
             // Initialize empty translation challenges array
-            vm.translationChallenges = [];
+            vm.translationChallenges = [
+                // {
+                //     "challengeId": 21,
+                //     "challengeTitle": "STT-Challenge TASHI TEST",
+                //     "entries": [
+                //         {
+                //             "methodName": "Ganga_Model",
+                //             "teamName": "OpenPecha_STT_team",
+                //             "result": [
+                //                 0.0455,
+                //                 0.9042
+                //             ],
+                //             "submittedAt": "2025-04-11T06:14:02.188502Z",
+                //             "schemaLabels": [
+                //                 "WER",
+                //                 "CER"
+                //             ]
+                //         }
+                //     ]
+                // },
+                // {
+                //     "challengeId": 22,
+                //     "challengeTitle": "Machine Translation Challenge TASHI TEST",
+                //     "entries": [
+                //         {
+                //             "methodName": "claude-3-7-sonnet-latest",
+                //             "teamName": "OpenPecha_MT_team",
+                //             "result": [
+                //                 10.38
+                //             ],
+                //             "submittedAt": "2025-04-30T09:19:46.475320Z",
+                //             "schemaLabels": [
+                //                 "LLMScore"
+                //             ]
+                //         },
+                //         {
+                //             "methodName": "gemini-1.5-pro",
+                //             "teamName": "OpenPecha_MT_team",
+                //             "result": [
+                //                 5.39
+                //             ],
+                //             "submittedAt": "2025-04-30T11:50:42.828254Z",
+                //             "schemaLabels": [
+                //                 "LLMScore"
+                //             ]
+                //         },
+                //         {
+                //             "methodName": "ChatGPT 4",
+                //             "teamName": "OpenPecha_MT_team",
+                //             "result": [
+                //                 3.02
+                //             ],
+                //             "submittedAt": "2025-05-01T04:25:35.397179Z",
+                //             "schemaLabels": [
+                //                 "LLMScore"
+                //             ]
+                //         }
+                //     ]
+                // }
+
+            ];
             
             // Test API connection directly
+            console.log('Testing API connection...');
             $http({
                 method: 'GET',
                 url: '/api/challenges/challenge/present/approved/public',
@@ -38,9 +99,10 @@
                     'Accept': 'application/json'
                 }
             }).then(function(response) {
-                // API test successful
+                console.log('Direct API test successful:', response);
             }).catch(function(error) {
-                // API test failed, will use fallback data
+                console.error('Direct API test failed:', error);
+                console.log('Will use fallback data for challenges');
             });
             
             // Load challenges data from API
@@ -62,8 +124,11 @@
         
         // Initialize charts with retry mechanism
         vm.initializeChartsWithRetry = function() {
+            console.log('Attempting to initialize charts, attempt #' + (vm.chartInitAttempts + 1));
+            
             // Check if charts are already initialized
             if (vm.chartsInitialized) {
+                console.log('Charts already initialized, skipping');
                 return;
             }
             
@@ -77,6 +142,7 @@
             if (vm.translationChallenges.length > 0) {
                 var sampleChartElement = document.getElementById('challenge-' + vm.translationChallenges[0].id + '-chart');
                 if (!sampleChartElement) {
+                    console.warn('Translation challenge chart elements not ready yet');
                     canProceed = false;
                 }
             }
@@ -85,21 +151,25 @@
             if (vm.challenges.length > 0) {
                 var apiChartElement = document.getElementById('challenge-' + vm.challenges[0].id + '-chart');
                 if (!apiChartElement && !isNaN(parseInt(vm.challenges[0].id))) {
+                    console.warn('API challenge chart elements not ready yet');
                     canProceed = false;
                 }
             }
             
             if (canProceed) {
                 // DOM elements are ready, initialize charts
+                console.log('DOM elements for charts are ready, initializing charts');
                 vm.initializeCharts();
                 vm.chartsInitialized = true;
             } else if (vm.chartInitAttempts < vm.maxChartInitAttempts) {
                 // Retry after a delay
+                console.log('Retrying chart initialization in 500ms');
                 setTimeout(function() {
                     vm.initializeChartsWithRetry();
                 }, 500);
             } else {
                 // Max attempts reached, try one last time anyway
+                console.warn('Max chart initialization attempts reached, forcing initialization');
                 vm.initializeCharts();
                 vm.chartsInitialized = true;
             }
@@ -113,6 +183,8 @@
         
         // Fetch challenges from API
         vm.fetchChallenges = function() {
+            console.log('Fetching challenges from API:', '/api/challenges/challenge/present/approved/public');
+            
             // Fallback data in case API fails
             var fallbackChallenges = [
                 {
@@ -171,16 +243,22 @@
             };
             parameters.callback = {
                 onSuccess: function(response) {
+                    console.log('API response received:', response);
+                    
                     // Check if we have a valid response with data
                     if (response && response.data) {
-                        // Response data received
+                        console.log('Response data:', response.data);
                     } else {
-                        // Invalid response format
+                        console.error('Invalid response format - no data property');
                     }
                     
                     if (response.data && response.data.results && response.data.results.length > 0) {
+                        console.log('Challenge results:', response.data.results);
                         try {
                             vm.challenges = response.data.results.map(function(item) {
+                                // Log each item for debugging
+                                console.log('Processing challenge item:', item);
+                                
                                 // Determine challenge status based on dates
                                 var now = moment();
                                 var startDate = moment(item.start_date);
@@ -206,10 +284,14 @@
                                     url: vm.baseUrl + '/web/challenges/challenge-page/' + (item.id || 0) + '/overview'
                                 };
                             });
+                            
+                            console.log('Successfully mapped challenges:', vm.challenges);
                         } catch (mappingError) {
+                            console.error('Error mapping challenge data:', mappingError);
                             vm.challenges = fallbackChallenges;
                         }
                     } else {
+                        console.warn('No challenges found in API response or invalid format. Using fallback data.');
                         vm.challenges = fallbackChallenges;
                     }
                     
@@ -226,6 +308,9 @@
                         return challenge.status === 'past';
                     }).length;
                     
+                    console.log('Processed challenges:', vm.challenges);
+                    console.log('Counts - Ongoing:', vm.ongoingCount, 'Upcoming:', vm.upcomingCount, 'Past:', vm.pastCount);
+                    
                     // Set initial filtered challenges
                     vm.setActiveTab(vm.activeTab);
                     
@@ -239,6 +324,7 @@
                     });
                 },
                 onError: function(error) {
+                    console.error('Error fetching challenges:', error);
                     // Fallback to static data if API fails
                     vm.challenges = fallbackChallenges;
                     
@@ -264,6 +350,7 @@
             try {
                 utilities.sendRequest(parameters);
             } catch (e) {
+                console.error('Exception while sending request:', e);
                 // Use fallback data if request fails
                 vm.challenges = fallbackChallenges;
                 
@@ -310,6 +397,15 @@
         
         // Function to get leaderboard data for a specific challenge
         vm.getLeaderboardForChallenge = function(challengeId, callback) {
+            // Only proceed if this is a numeric ID (real challenge from API)
+            // if (isNaN(parseInt(challengeId))) {
+            //     console.log('Skipping leaderboard fetch for non-numeric ID:', challengeId);
+            //     if (callback) callback([]);
+            //     return;
+            // }
+            
+            console.log('Fetching leaderboard for challenge ID:', challengeId);
+            
             // Find the challenge object to get the title
             var challengeTitle = '';
             var challengeObj = vm.challenges.find(function(c) {
@@ -318,6 +414,7 @@
             
             if (challengeObj) {
                 challengeTitle = challengeObj.title;
+                console.log('Found challenge title:', challengeTitle);
             }
             
             // Step 1: Get challenge phases
@@ -326,9 +423,12 @@
             phaseParams.method = 'GET';
             phaseParams.callback = {
                 onSuccess: function(phaseResponse) {
+                    console.log('Challenge phases received:', phaseResponse);
+                    
                     if (phaseResponse.data && phaseResponse.data.results && phaseResponse.data.results.length > 0) {
                         // Get the first phase ID
                         var phaseId = phaseResponse.data.results[0].id;
+                        console.log('Using phase ID:', phaseId);
                         
                         // Step 2: Get phase splits
                         var splitParams = {};
@@ -336,12 +436,15 @@
                         splitParams.method = 'GET';
                         splitParams.callback = {
                             onSuccess: function(splitResponse) {
+                                console.log('Phase splits received:', splitResponse);
+                                
                                 if (splitResponse.data && splitResponse.data && splitResponse.data.length > 0) {
                                     var splits = splitResponse.data;
                                     var relevantSplits = splits;
                                     
                                     if (relevantSplits.length) {
                                         var splitId = relevantSplits[0].id;
+                                        console.log('Using split ID:', splitId);
                                         
                                         // Step 3: Get leaderboard data
                                         var leaderboardParams = {};
@@ -349,6 +452,8 @@
                                         leaderboardParams.method = 'GET';
                                         leaderboardParams.callback = {
                                             onSuccess: function(leaderboardResponse) {
+                                                console.log('Leaderboard data received:', leaderboardResponse);
+                                                
                                                 if (leaderboardResponse.data && leaderboardResponse.data.results) {
                                                     // Process and store the leaderboard data with enhanced information
                                                     var processedData = {
@@ -366,22 +471,26 @@
                                                             };
                                                         })
                                                     };
+                                                    console.log('Processed leaderboard data:', processedData);
                                                     
                                                     // Store the processed leaderboard data
                                                     vm.leaderboards[challengeId] = processedData;
                                                     vm.translationChallenges.push(processedData);
+                                                    console.log('Translation challenges:', vm.translationChallenges);
                                                     
                                                     // Return the leaderboard data through callback
                                                     if (callback) {
                                                         callback(processedData);
                                                     }
                                                 } else {
+                                                    console.warn('No leaderboard data found');
                                                     if (callback) {
                                                         callback([]);
                                                     }
                                                 }
                                             },
                                             onError: function(error) {
+                                                console.error('Error fetching leaderboard data:', error);
                                                 if (callback) {
                                                     callback([]);
                                                 }
@@ -390,17 +499,20 @@
                                         
                                         utilities.sendRequest(leaderboardParams);
                                     } else {
+                                        console.warn('No relevant phase splits found for phase ID:', phaseId);
                                         if (callback) {
                                             callback([]);
                                         }
                                     }
                                 } else {
+                                    console.warn('No phase splits found');
                                     if (callback) {
                                         callback([]);
                                     }
                                 }
                             },
                             onError: function(error) {
+                                console.error('Error fetching phase splits:', error);
                                 if (callback) {
                                     callback([]);
                                 }
@@ -409,12 +521,14 @@
                         
                         utilities.sendRequest(splitParams);
                     } else {
+                        console.warn('No phases found for challenge');
                         if (callback) {
                             callback([]);
                         }
                     }
                 },
                 onError: function(error) {
+                    console.error('Error fetching challenge phases:', error);
                     if (callback) {
                         callback([]);
                     }
@@ -428,6 +542,7 @@
         vm.plotLeaderboardData = function(challengeId, chartElementId) {
             // Get the leaderboard data
             if (vm.leaderboards[challengeId]) {
+                console.log('Using cached leaderboard data for challenge:', challengeId);
                 // Use cached data if available
                 var leaderboardData = vm.leaderboards[challengeId];
                 vm.renderLeaderboardChart(leaderboardData, chartElementId);
@@ -437,6 +552,8 @@
                 vm.getLeaderboardForChallenge(challengeId, function(leaderboardData) {
                     if (leaderboardData && leaderboardData.entries && leaderboardData.entries.length > 0) {
                         vm.renderLeaderboardChart(leaderboardData, chartElementId);
+                    } else {
+                        console.warn('No leaderboard data available for challenge:', challengeId);
                     }
                 });
             }
@@ -452,9 +569,12 @@
                 return text;
             }
   
+            console.log('Rendering chart for challenge:', leaderboardData.challengeId, 'with data:', leaderboardData);
+            
             // Get the canvas element
             var ctx = document.getElementById(chartElementId);
             if (!ctx) {
+                console.error('Chart element not found:', chartElementId);
                 return;
             }
             
@@ -462,6 +582,7 @@
             var topEntries = leaderboardData.entries.slice(0, 5);
             
             // Prepare data for chart
+            var labels = [];
             var datasets = [];
             var metricLabels = [];
             
@@ -473,17 +594,21 @@
                     hasMultipleMetrics = true;
                     metricLabels = firstEntry.schemaLabels.length >= firstEntry.result.length ? 
                                   firstEntry.schemaLabels.slice(0, firstEntry.result.length) : 
-                                  firstEntry.result.map(function(_, i) { return 'Metric ' + (i+1); });
+                                  firstEntry.result.map(function(_, i) { return 'Metric ' + (i+1) });
                 } else {
                     hasMultipleMetrics = true;
                     metricLabels = [firstEntry.schemaLabels[0]];
                 }
             }
             
+            // // Extract method names for labels
+            // topEntries.forEach(function(entry) {
+            //     labels.push(wrapLabel(entry.methodName || 'Unknown Method', 20));
+            // });
             // build wrapped labels
             const rawLabels = topEntries.map(entry => entry.methodName || 'Unknown Method');
             const wrappedLabels = rawLabels.map(l => wrapLabel(l, 20));
-            
+            // labels = wrappedLabels;
             // Create datasets based on metrics
             if (hasMultipleMetrics) {
                 // Create a dataset for each metric
@@ -564,6 +689,14 @@
                         },
                         y: {
                             beginAtZero: true,
+                            // Set min/max based on data range
+                            // min: function() {
+                            //     var allValues = [];
+                            //     datasets.forEach(function(dataset) {
+                            //         allValues = allValues.concat(dataset.data);
+                            //     });
+                            //     return Math.max(0, Math.min.apply(null, allValues) * 0.9);
+                            // }(),
                             max: function() {
                                 var allValues = [];
                                 datasets.forEach(function(dataset) {
@@ -607,28 +740,100 @@
                             }
                         }
                     }
-                }
-            });
+                }}
+            );
+            
+            console.log('Chart created successfully');
         };
         
         // Load sample leaderboard data for demonstration
         vm.loadSampleLeaderboardData = function() {
             // Sample leaderboard data in the exact format from the API
-            var sampleLeaderboardData = [];
+            var sampleLeaderboardData = [
+                // {
+                //     "challengeId": 21,
+                //     "challengeTitle": "STT-Challenge",
+                //     "entries": [
+                //         {
+                //             "methodName": "Ganga_Model",
+                //             "teamName": "OpenPecha_STT_team",
+                //             "result": [
+                //                 0.0455,
+                //                 0.9042
+                //             ],
+                //             "submittedAt": "2025-04-11T06:14:02.188502Z",
+                //             "schemaLabels": [
+                //                 "WER",
+                //                 "CER"
+                //             ]
+                //         }
+                //     ]
+                // },
+                // {
+                //     "challengeId": 22,
+                //     "challengeTitle": "Machine Translation Challenge TASHI TEST",
+                //     "entries": [
+                //         {
+                //             "methodName": "claude-3-7-sonnet-latest",
+                //             "teamName": "OpenPecha_MT_team",
+                //             "result": [
+                //                 10.38
+                //             ],
+                //             "submittedAt": "2025-04-30T09:19:46.475320Z",
+                //             "schemaLabels": [
+                //                 "LLMScore"
+                //             ]
+                //         },
+                //         {
+                //             "methodName": "gemini-1.5-pro",
+                //             "teamName": "OpenPecha_MT_team",
+                //             "result": [
+                //                 5.39
+                //             ],
+                //             "submittedAt": "2025-04-30T11:50:42.828254Z",
+                //             "schemaLabels": [
+                //                 "LLMScore"
+                //             ]
+                //         },
+                //         {
+                //             "methodName": "ChatGPT 4",
+                //             "teamName": "OpenPecha_MT_team",
+                //             "result": [
+                //                 3.02
+                //             ],
+                //             "submittedAt": "2025-05-01T04:25:35.397179Z",
+                //             "schemaLabels": [
+                //                 "LLMScore"
+                //             ]
+                //         }
+                //     ]
+                // }
+            ];
             
-            // Store the sample data in the leaderboards object
-            sampleLeaderboardData.forEach(function(data) {
-                vm.leaderboards[data.challengeId] = data;
-                vm.translationChallenges.push(data);
+            // Store the leaderboard data in the vm.leaderboards object
+            sampleLeaderboardData.forEach(function(leaderboard) {
+                vm.leaderboards[leaderboard.challengeId] = leaderboard;
+                
+                // Add to translation challenges array for display in the UI
+                vm.translationChallenges.push({
+                    id: leaderboard.challengeId,
+                    title: leaderboard.challengeTitle,
+                    metricName: leaderboard.entries[0].schemaLabels.join(", ")
+                });
+                
+                console.log('Added leaderboard data for challenge:', leaderboard.challengeTitle);
             });
         };
         
         // Initialize charts for each challenge
         vm.initializeCharts = function() {
+            console.log('Initializing charts for challenges');
+            
             // For API challenges
             vm.challenges.forEach(function(challenge) {
                 // Only fetch data for challenges with numeric IDs
                 if (!isNaN(parseInt(challenge.id))) {
+                    console.log('Fetching leaderboard data for real challenge ID:', challenge.id);
                     // Make sure the chart element exists
                     var chartElement = document.getElementById('challenge-' + challenge.id + '-chart');
                     if (chartElement) {
@@ -641,10 +846,12 @@
             vm.translationChallenges.forEach(function(challenge) {
                 var ctx = document.getElementById(challenge.id + '-chart');
                 if (ctx) {
+                    console.log('Renering chart for tdranslation challenge:', challenge.id);
                     // Use the same rendering function as for API challenges
                     if (vm.leaderboards[challenge.id]) {
                         vm.renderLeaderboardChart(vm.leaderboards[challenge.id], challenge.id + '-chart');
                     } else {
+                        console.warn('No leaderboard data available for translation challenge:', challenge.id);
                         // Create a placeholder chart with "No data available" message
                         new Chart(ctx, {
                             type: 'bar',
