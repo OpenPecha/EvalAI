@@ -582,7 +582,7 @@
             var topEntries = leaderboardData.entries.slice(0, 5);
             
             // Prepare data for chart
-            var labels = [];
+            // var labels = [];
             var datasets = [];
             var metricLabels = [];
             
